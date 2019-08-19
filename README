@@ -40,8 +40,8 @@
  INSTALL
  -------
 
- 1. DISTRIBUTION PACKAGE
- -----------------------
+ DISTRIBUTION PACKAGE
+ --------------------
     Since the Cairo Chart Kit is a developer package installation may vary according to your needs.
     You could download the source package and incorporate it directly into your project if desired, 
     but the best option would probably be to download and place it in its own directory 
