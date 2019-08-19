@@ -1,0 +1,73 @@
+ LICENSE
+ -------
+    Copyright (C) 2019 Anthony Buckley
+
+    This file is part of Cairo Chart Kit.
+
+    Cairo Chart Kit is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Cairo Chart Kit is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Cairo Chart Kit.  If not, see <http://www.gnu.org/licenses/>.
+
+
+ DESCRIPTION
+ -----------
+    This is a package for developers.
+
+    Cairo Chart Kit is a framework source kit that provides a means to easily create and incorporate
+    a number of charts into your application using Cairo graphics. At its core are a number of utility
+    functions and framework code segments that you include into your package source directory. You insert
+    framework calls into your existing code and these call utility functions to set up and draw required charts.
+    You may also alter and tweak any code to better suit your requirements if desired.
+
+    There is a skeleton code structure provided that may be used as a basis for your control code if desired.
+    However the best way to learn how to use the framework is to compile and run the demo program 
+    which sets up and displays each type of chart and then review the code for these - the framework
+    calls are highlighted throughout.
+
+    The following charts are available: Pie chart, Bar chart and Line graph.
+
+    The code is all written in c.
+
+ INSTALL
+ -------
+
+ 1. DISTRIBUTION PACKAGE
+ -----------------------
+    Since the Cairo Chart Kit is a developer package installation may vary according to your needs.
+    You could download the source package and incorporate it directly into your project if desired, 
+    but the best option would probably be to download and place it in its own directory 
+    (eg. $HOME/Development/CairoChart). Then compile and run the demo and copy all relevant code
+    across to your target application.
+
+    Download the latest distribution archive from here: 
+    	https://github.com/mr-headwind/CairoChart/tree/master/DIST_PACKAGES 
+
+    Start a terminal or xterm session
+    cd $HOME/Development/CairoChart (or your download directory)
+    tar xvzf CairoChartKit-x.xx.tar.gz (where x.xx is the version number)
+    
+    See instructions for compiling and running the demo.
+
+ DEPENDENCIES
+ ------------
+    Given that this is a package for developers, dependency problems are unlikely, although it is
+    possible cairo may need to be installed. 
+    The GTK+ 3.0 libraries need to be installed and, for the most part,
+    will likely already be present. However if there is a problem try:
+    	sudo apt-get build-dep libgtk-3-dev 
+	sudo apt-get update
+    	sudo apt-get install libcairo2-dev
+    
+ BUGS & SUGGESTIONS
+ ------------------
+    Email any bugs, requests or suggestions to tony.buckley000@gmail.com
+
