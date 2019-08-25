@@ -45,12 +45,28 @@
 /* Defines */
 
 
+/* Types */
+
+typedef struct _demo_ui
+{
+    GtkWidget *window;
+    GtkWidget *close_btn;
+} Ui;
+
+typedef struct _chart_data
+{
+    double *pie_data[];
+    double *bar_data[][3];
+    double *line_data[][10];
+} ChartData;
+
+
 /* Prototypes */
 
-void initialise(MainUi *);
-void final(MainUi *);
+void initialise(ChartData *, Ui *);
+void final(Ui *);
 
-extern void main_ui(MainUi *);
+extern void main_ui(ChartData *, Ui *);
 extern void free_pie_chart(PieChart *);
 extern void free_bar_chart(BarChart *);
 extern void free_line_chart(LineChart *);
@@ -59,21 +75,37 @@ extern void free_line_chart(LineChart *);
 /* Globals */
 
 static const char *debug_hdr = "DEBUG-demo_main.c ";
+static const double *pie_test[] = { 150.0, 523.0, 75.0, 350.0, 10.0 };
+static const double *bar_test[][3] = { { 5.0, 25.0, 15.0 }, { 15.0, 25.0, 43.0 } };
+static const double *line_test[][10] = {
+					( 0.0, 0.0 }, 
+					( 1.0, 5.0 }, 
+					{ 2.0, 2.0 },
+					{ 3.0, 25.0 },
+					{ 4.0, 30.0 },
+					{ 5.0, 12.0 },
+					{ 6.0, 0.0 },
+					{ 7.0, 18.0 },
+					{ 8.0, 23.0 },
+					{ 9.0, 29.0 },
+					{ 10.0, 15.0 }
+				       };
 
 
 /* Main program control */
 
 int main(int argc, char *argv[])
 {  
-    MainUi m_ui;
+    Ui m_ui;
+    ChartData chart_data;
 
     /* Initial work */
-    initialise(&m_ui);
+    initialise(&ChartData, &m_ui);
 
     /* Initialise Gtk */
     gtk_init(&argc, &argv);  
 
-    main_ui(&m_ui);
+    main_ui(&ChartData, &m_ui);
 
     gtk_main();  
 
@@ -85,11 +117,14 @@ int main(int argc, char *argv[])
 
 /* Initial work */
 
-void initialise(MainUi *m_ui)
+void initialise(ChartData *c_data, Ui *m_ui)
 {
     /* Set variables */
     app_msg_extra[0] = '\0';
     memset(m_ui, 0, sizeof (MainUi));
+    c_data->pie_data = pie_test;
+    c_data->bar_data = bar_test;
+    c_data->line_data = line_test;
 
     return;
 }

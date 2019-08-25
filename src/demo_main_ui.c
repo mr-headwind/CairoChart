@@ -51,7 +51,8 @@
 
 /* Prototypes */
 
-void main_ui(IspData *, MainUi *);
+void main_ui(ChartData *, Ui *);
+
 void create_menu(IspData *, MainUi *);
 void create_main_view(IspData *, MainUi *);
 void usage_btns(MainUi *);
@@ -110,7 +111,7 @@ static const char *debug_hdr = "DEBUG-demo_main_ui.c ";
 
 /* Create the user interface and set the CallBacks */
 
-void main_ui(IspData *isp_data, MainUi *m_ui)
+void main_ui(ChartData *c_data, MainUi *m_ui)
 {  
     /* Set up the UI window */
     m_ui->window = gtk_window_new(GTK_WINDOW_TOPLEVEL);  
