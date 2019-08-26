@@ -38,7 +38,7 @@
 #include <stdlib.h>  
 #include <string.h>  
 #include <gtk/gtk.h>  
-#include <main.h>
+#include <demo.h>
 #include <defs.h>
 
 
@@ -46,19 +46,6 @@
 
 
 /* Types */
-
-typedef struct _demo_ui
-{
-    GtkWidget *window;
-    GtkWidget *close_btn;
-} Ui;
-
-typedef struct _chart_data
-{
-    double *pie_data[];
-    double *bar_data[][3];
-    double *line_data[][10];
-} ChartData;
 
 
 /* Prototypes */
