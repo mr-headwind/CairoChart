@@ -52,10 +52,19 @@
 /* Prototypes */
 
 void main_ui(ChartData *, Ui *);
+void create_main_view(Ui *);
+void chart_btns(MainUi *);
+void pie_panel(MainUi *);
+void bar_panel(MainUi *);
+void line_panel(MainUi *);
+void OnPieChart(GtkWidget*, gpointer);
+void OnBarChart(GtkWidget*, gpointer);
+void OnlineGraph(GtkWidget*, gpointer);
+void OnQuit(GtkWidget*, gpointer);
 
-void create_menu(IspData *, MainUi *);
-void create_main_view(IspData *, MainUi *);
-void usage_btns(MainUi *);
+extern void set_css();
+
+
 void set_connect_btns(MainUi *, int); 
 void set_panel_btn(GtkWidget *, char *, GtkWidget *, int, int, int, int);
 void create_label(GtkWidget **, char *, char *, GtkWidget *, int, int, int, int);
@@ -76,30 +85,13 @@ void set_retry_txt(MainUi *, char *, int);
 GtkWidget * debug_cntr(GtkWidget *);
 
 extern void log_msg(char*, char*, char*, GtkWidget*);
-extern void user_login_main(IspData *, GtkWidget *);
-extern int check_user_creds(IspData *, MainUi *);
-extern int ssl_service_details(IspData *, MainUi *);
-extern void overview_panel(MainUi *);
-extern void load_overview(IspData *, MainUi *);
-extern void serv_plan_panel(MainUi *);
-extern void serv_plan_details(int, MainUi *);
-extern void history_panel(MainUi *);
-extern void pref_panel(MainUi *);
-extern void about_panel(MainUi *);
-extern void monitor_panel(MainUi *);
-extern void init_history(MainUi *);
-extern void set_css();
 extern int get_user_pref(char *, char **);
 extern int version_req_chk(IspData *, MainUi *);
 
-extern void OnOverview(GtkWidget*, gpointer);
-extern void OnService(GtkWidget*, gpointer);
-extern void OnMonitor(GtkWidget*, gpointer);
 extern void OnHistory(GtkWidget*, gpointer);
 extern void OnPref(GtkWidget*, gpointer);
 extern void OnAbout(GtkWidget*, gpointer);
 extern void OnUserLogin(GtkWidget*, gpointer);
-extern void OnQuit(GtkWidget*, gpointer);
 
 extern void OnOK(GtkRange*, gpointer);
 
@@ -126,7 +118,7 @@ void main_ui(ChartData *c_data, MainUi *m_ui)
     gtk_widget_set_halign(GTK_WIDGET (m_ui->mbox), GTK_ALIGN_START);
 
     /* CONTROL PANEL */
-    create_main_view(isp_data, m_ui);
+    create_main_view(m_ui);
 
     /* INFORMATION AREA AT BOTTOM OF WINDOW */
     m_ui->status_info = gtk_label_new(NULL);
@@ -154,26 +146,23 @@ void main_ui(ChartData *c_data, MainUi *m_ui)
 
 /* Main view */
 
-void create_main_view(IspData *isp_data, MainUi *m_ui)
+void create_main_view(Ui *m_ui)
 {  
     /* New container for main view */
     m_ui->ctrl_box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 1);
 
-    /* Usage button panel */
-    usage_btns(m_ui);
+    /* Button panel */
+    chart_btns(m_ui);
 
     /* Stack widget to attach the different panels to */
     m_ui->panel_stk = gtk_stack_new();
     gtk_stack_set_homogeneous(GTK_STACK (m_ui->panel_stk), TRUE);
     gtk_stack_set_transition_type (GTK_STACK (m_ui->panel_stk), GTK_STACK_TRANSITION_TYPE_NONE); 
 
-    /* Usage panels */
-    overview_panel(m_ui);
-    serv_plan_panel(m_ui);
-    monitor_panel(m_ui);
-    history_panel(m_ui);
-    pref_panel(m_ui);
-    about_panel(m_ui);
+    /* Chart panels */
+    pie_panel(m_ui);
+    bar_panel(m_ui);
+    line_panel(m_ui);
 
     /* Combine everything onto the main view */
     gtk_box_pack_start (GTK_BOX (m_ui->ctrl_box), m_ui->btn_panel, FALSE, FALSE, 0);
@@ -183,13 +172,13 @@ void create_main_view(IspData *isp_data, MainUi *m_ui)
 }
 
 
-/* Usage monitor button (menu) panel */
+/* Chart button (menu) panel */
 
-void usage_btns(MainUi *m_ui)
+void chart_btns(Ui *m_ui)
 {  
     int i, j;
 
-    /* Create grid to contain the usage monitor function buttons */
+    /* Create grid to contain function buttons */
     m_ui->btn_panel = gtk_grid_new();
     gtk_widget_set_name(m_ui->btn_panel, "btn_panel");
     gtk_grid_set_row_spacing(GTK_GRID (m_ui->btn_panel), 2);
@@ -200,37 +189,27 @@ void usage_btns(MainUi *m_ui)
 
     /* Create buttons */
     i = j = 0;
-    m_ui->overview_btn = gtk_button_new_with_label("Overview");  
-    set_panel_btn(m_ui->overview_btn, "overview_btn",  m_ui->btn_panel, i, j, 1, 1);
+    m_ui->overview_btn = gtk_button_new_with_label("Pie Chart");  
+    set_panel_btn(m_ui->pie_btn, "pie_btn",  m_ui->btn_panel, i, j, 1, 1);
 
     i++;
-    m_ui->service_btn = gtk_button_new_with_label("Service");  
-    set_panel_btn(m_ui->service_btn, "service_btn",  m_ui->btn_panel, i, j, 1, 1);
+    m_ui->service_btn = gtk_button_new_with_label("Bar Chart");  
+    set_panel_btn(m_ui->bar_btn, "bar_btn",  m_ui->btn_panel, i, j, 1, 1);
 
     i++;
-    m_ui->monitor_btn = gtk_button_new_with_label("Monitor");  
-    set_panel_btn(m_ui->monitor_btn, "monitor_btn",  m_ui->btn_panel, i, j, 1, 1);
+    m_ui->monitor_btn = gtk_button_new_with_label("Line Graph");  
+    set_panel_btn(m_ui->line_btn, "line_btn",  m_ui->btn_panel, i, j, 1, 1);
 
     i = 0;
     j++;
-    m_ui->history_btn = gtk_button_new_with_label("History");  
-    set_panel_btn(m_ui->history_btn, "history_btn",  m_ui->btn_panel, i, j, 1, 1);
-
-    i++;
-    m_ui->pref_btn = gtk_button_new_with_label("Preferences");  
-    set_panel_btn(m_ui->pref_btn, "pref_btn",  m_ui->btn_panel, i, j, 1, 1);
-
-    i++;
-    m_ui->about_btn = gtk_button_new_with_label("About");  
-    set_panel_btn(m_ui->about_btn, "about_btn",  m_ui->btn_panel, i, j, 1, 1);
+    m_ui->history_btn = gtk_button_new_with_label("Close");  
+    set_panel_btn(m_ui->close_btn, "close_btn",  m_ui->btn_panel, i, j, 1, 1);
 
     /* Callbacks */
-    g_signal_connect (m_ui->overview_btn, "clicked", G_CALLBACK (OnOverview), m_ui);
-    g_signal_connect (m_ui->service_btn, "clicked", G_CALLBACK (OnService), m_ui);
-    g_signal_connect (m_ui->monitor_btn, "clicked", G_CALLBACK (OnMonitor), m_ui);
-    g_signal_connect (m_ui->history_btn, "clicked", G_CALLBACK (OnHistory), m_ui);
-    g_signal_connect (m_ui->pref_btn, "clicked", G_CALLBACK (OnPref), m_ui);
-    g_signal_connect (m_ui->about_btn, "clicked", G_CALLBACK (OnAbout), m_ui);
+    g_signal_connect (m_ui->pie_btn, "clicked", G_CALLBACK (OnPieChart), m_ui);
+    g_signal_connect (m_ui->bar_btn, "clicked", G_CALLBACK (OnBarChart), m_ui);
+    g_signal_connect (m_ui->line_btn, "clicked", G_CALLBACK (OnLineGraph), m_ui);
+    g_signal_connect (m_ui->close_btn, "clicked", G_CALLBACK (OnQuit), m_ui->window);
 
     return;
 }

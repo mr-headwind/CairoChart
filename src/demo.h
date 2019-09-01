@@ -38,6 +38,11 @@
 #define DEMO_HDR
 #endif
 
+#ifndef TITLE
+#define TITLE "Cairo Chart"
+#endif
+
+
 
 /* Includes */
 
@@ -86,7 +91,6 @@ typedef struct _demo_ui
 
 
 /* Structure for test data */
-
 
 typedef struct _chart_data
 {
