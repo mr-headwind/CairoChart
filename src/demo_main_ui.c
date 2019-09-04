@@ -65,7 +65,6 @@ void OnQuit(GtkWidget*, gpointer);
 extern void set_css();
 
 
-void set_connect_btns(MainUi *, int); 
 void set_panel_btn(GtkWidget *, char *, GtkWidget *, int, int, int, int);
 void create_label(GtkWidget **, char *, char *, GtkWidget *, int, int, int, int);
 void create_label2(GtkWidget **, char *, char *, GtkWidget *);
@@ -73,27 +72,10 @@ void create_entry(GtkWidget **, char *, GtkWidget *, int, int);
 void create_radio(GtkWidget **, GtkWidget *, char *, char *, GtkWidget *, int, char *, char *);
 void create_cbox(GtkWidget **, char *, const char *[], int, int, GtkWidget *, int, int);
 void show_panel(GtkWidget *, MainUi *); 
-void disable_login(MainUi *);
-void start_usage_mon(IspData *, MainUi *);
-void add_connect_loop(MainUi *);
-void add_main_loop(MainUi *);
-gboolean connect_main_loop_fn(gpointer);
-gboolean refresh_main_loop_fn(gpointer);
-int refresh_thread(MainUi *);
-void * timer_thread(void *);
-void set_retry_txt(MainUi *, char *, int);
 GtkWidget * debug_cntr(GtkWidget *);
 
 extern void log_msg(char*, char*, char*, GtkWidget*);
-extern int get_user_pref(char *, char **);
 extern int version_req_chk(IspData *, MainUi *);
-
-extern void OnHistory(GtkWidget*, gpointer);
-extern void OnPref(GtkWidget*, gpointer);
-extern void OnAbout(GtkWidget*, gpointer);
-extern void OnUserLogin(GtkWidget*, gpointer);
-
-extern void OnOK(GtkRange*, gpointer);
 
 
 /* Globals */
@@ -230,18 +212,6 @@ void set_panel_btn(GtkWidget *btn, char *nm, GtkWidget *cntr,
 }
 
 
-/* Enable or disable the date panel buttons */
-
-void set_connect_btns(MainUi *m_ui, int sens) 
-{
-    gtk_widget_set_sensitive (m_ui->overview_btn, sens);
-    gtk_widget_set_sensitive (m_ui->service_btn, sens);
-    gtk_widget_set_sensitive (m_ui->history_btn, sens);
-
-    return;
-}
-
-
 /* Maintain which panel is visible */
 
 void show_panel(GtkWidget *cntr, MainUi *m_ui) 
@@ -252,6 +222,33 @@ void show_panel(GtkWidget *cntr, MainUi *m_ui)
     gtk_stack_set_visible_child (GTK_STACK (m_ui->panel_stk), cntr);
 
     m_ui->curr_panel = cntr;
+
+    return;
+}
+
+
+/* Display a pie chart */
+
+void pie_panel(MainUi *m_ui) 
+{
+
+    return;
+}
+
+
+/* Display a bar chart */
+
+void bar_panel(MainUi *m_ui) 
+{
+
+    return;
+}
+
+
+/* Display a line graph */
+
+void line_panel(MainUi *m_ui) 
+{
 
     return;
 }
@@ -355,241 +352,6 @@ void create_cbox(GtkWidget **cbox, char *nm, const char *arr[], int max, int act
     gtk_widget_set_valign(*cbox, GTK_ALIGN_CENTER);
     gtk_widget_set_margin_top (*cbox, 0);
     gtk_grid_attach(GTK_GRID (cntr), *cbox, col, row, 1, 1);
-
-    return;
-}
-
-
-/* The manual login menu should be disabled once logged in */
-
-void disable_login(MainUi *m_ui)
-{  
-    gtk_widget_set_sensitive (m_ui->user_login, FALSE);
-
-    if (m_ui->user_cd == FALSE)
-    	gtk_widget_set_sensitive (m_ui->reset_pw_btn, FALSE);
-
-
-    return;
-}
-
-
-/* Start the usage monitor */
-
-void start_usage_mon(IspData *isp_data, MainUi *m_ui)
-{  
-    set_connect_btns(m_ui, TRUE);
-    disable_login(m_ui);
-    serv_plan_details(TRUE, m_ui);
-    load_overview(isp_data, m_ui);
-    show_panel(m_ui->oview_cntr, m_ui);
-
-    if (refresh_thread(m_ui) == TRUE)
-	add_main_loop(m_ui);
-
-    return;
-}
-
-
-// Inject a main loop timer to initiate isp connection.
-// Required as main loop needs to be started in case of an error. */
-
-void add_connect_loop(MainUi *m_ui)
-{  
-    g_timeout_add(1, connect_main_loop_fn, m_ui);
-
-    /* Appears to need a short delay to avoid bus connection error - for main loop to start? */
-    usleep(5);
-
-    return;
-}
-
-
-/* Inject a main loop timer */
-
-void add_main_loop(MainUi *m_ui)
-{  
-    m_ui->RefTmr.tmr_id = g_timeout_add_seconds(main_loop_interval, refresh_main_loop_fn, m_ui);
-
-    return;
-}
-
-
-/* Main loop timer function for isp connection */
-
-gboolean connect_main_loop_fn(gpointer user_data)
-{
-    int login_req, r;
-    MainUi *m_ui;
-    IspData *isp_data;
-
-    /* Initial */
-    m_ui = (MainUi *) user_data;
-    isp_data = (IspData *) g_object_get_data (G_OBJECT (m_ui->window), "isp_data");
-
-    /* Check user credentials from the gnome keyring */
-    login_req = FALSE;
-
-    if (check_user_creds(isp_data, m_ui) == FALSE)
-    {
-	/* Get user credentials and service request via user entry interface */
-	login_req = TRUE;
-    }
-    else
-    {
-	/* Initiate a service request */
-	r = ssl_service_details(isp_data, m_ui);
-	
-	if (r == -1)
-	{
-	    login_req = TRUE;
-	}
-	else if (r == FALSE)
-	{
-	    g_timeout_add_seconds(60, connect_main_loop_fn, m_ui);
-	    return FALSE;
-	}
-    }
-
-    /* User login or display usage details */
-    if (login_req == TRUE)
-    	user_login_main(isp_data, m_ui->window);
-    else
-	start_usage_mon(isp_data, m_ui);
-
-    /* Return False destroys the loop function */
-    return FALSE;
-}
-
-
-/* Main loop timer function to check for data refresh */
-
-gboolean refresh_main_loop_fn(gpointer user_data)
-{
-    int login_req, r;
-    MainUi *m_ui;
-    IspData *isp_data;
-    RefreshTmr *ref_tmr;
-
-    /* Initial */
-    m_ui = (MainUi *) user_data;
-    ref_tmr = &(m_ui->RefTmr);
-    isp_data = (IspData *) g_object_get_data (G_OBJECT (m_ui->window), "isp_data");
-
-    gtk_label_set_text (GTK_LABEL (m_ui->status_info), ref_tmr->info_txt);
-    gtk_widget_show (m_ui->status_info);
-
-    /* One-off new version check */
-    version_req_chk(isp_data, m_ui);
-
-    /* Check refresh required */
-    if (ref_tmr->refresh_req == FALSE)
-    	return TRUE;
-
-    /* Reset usage data */
-    if (ssl_service_details(isp_data, m_ui) != TRUE)
-    {
-	refresh_thread(m_ui);
-    	return TRUE;
-    }
-
-    serv_plan_details(FALSE, m_ui);
-
-    init_history(m_ui);
-    load_overview(isp_data, m_ui);
-    refresh_thread(m_ui);
-
-    return TRUE;
-}
-
-
-/* Start the refresh timer thread and set the start time */
-
-int refresh_thread(MainUi *m_ui)
-{  
-    int p_err;
-    char *p;
-
-    /* Initial timer setup */
-    m_ui->RefTmr.refresh_req = FALSE;
-    m_ui->RefTmr.start_t = time(NULL);
-    get_user_pref(REFRESH_TM, &p);
-    m_ui->RefTmr.ref_interval = atol(p) * 60;
-
-    /* Start thread */
-    if ((p_err = pthread_create(&(m_ui->RefTmr.refresh_tid), NULL, &timer_thread, (void *) m_ui)) != 0)
-    {
-	sprintf(app_msg_extra, "Error: %s", strerror(p_err));
-	log_msg("ERR0044", NULL, "ERR0044", m_ui->window);
-	return FALSE;
-    }
-
-    return TRUE;
-}
-
-
-/* Refresh timer thread */
-
-void * timer_thread(void *arg)
-{  
-    int mins;
-    time_t ref_t;
-    MainUi *m_ui;
-    RefreshTmr *ref_tmr;
-
-    /* Initial */
-    m_ui = (MainUi *) arg;
-    ref_tmr = &(m_ui->RefTmr);
-    ref_t = ref_tmr->start_t + ref_tmr->ref_interval;
-
-    /* Get time */
-    while(1)
-    {
-	ref_tmr->curr_t = time(NULL);
-	mins = (int) (((ref_t - ref_tmr->curr_t) / 60.0) + 0.5);
-
-	/* Set info text */
-	if (mins == 0)
-	{
-	    sprintf(ref_tmr->info_txt, "Refreshing usage details...");
-	    ref_tmr->refresh_req = TRUE;
-	    break;
-	}
-	else
-	{
-	    if (mins == 1)
-		sprintf(ref_tmr->info_txt, "Next refresh due in %d minute", mins);
-	    else
-		sprintf(ref_tmr->info_txt, "Next refresh due in %d minutes", mins);
-	}
-
-	sleep(15);
-    }
-    
-    pthread_exit(&ret_mon);
-
-/* Debug
-printf("%s timer thread start\n", debug_hdr); fflush(stdout);
-printf("%s timer thread start: %ld, current: %ld, interval %ld\n", 
-    debug_hdr, ref_tmr->start_t, ref_tmr->curr_t, ref_tmr->ref_interval); fflush(stdout);
-printf("%s timer thread exit\n", debug_hdr); fflush(stdout);
-*/
-}
-
-
-/* Set text for retry messages based on whether CairoChart has really started or not */
-
-void set_retry_txt(MainUi *m_ui, char *buf, int maxsz)
-{
-    static const char *retry_nxtref = ", retry at next refresh.";
-    static const char *retry_1min = ", retry in 1 min.";
-
-    memset(buf, '\0', maxsz);
-
-    if (m_ui->RefTmr.refresh_req == TRUE)
-    	strncpy(buf, retry_nxtref, maxsz - 1);
-    else
-    	strncpy(buf, retry_1min, maxsz - 1);
 
     return;
 }
