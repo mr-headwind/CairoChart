@@ -81,7 +81,7 @@ typedef struct _demo_ui
     BarChart *bar_chart;
 
     /* Widgets - line graph */
-    LineGraph *hist_usg_graph;
+    LineGraph *line_graph;
 
     /* Callback Handlers */
     int close_hndlr_id;

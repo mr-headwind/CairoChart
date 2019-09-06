@@ -39,7 +39,6 @@
 #include <string.h>  
 #include <gtk/gtk.h>  
 #include <demo.h>
-#include <defs.h>
 
 
 /* Defines */
@@ -56,7 +55,7 @@ void final(Ui *);
 extern void main_ui(ChartData *, Ui *);
 extern void free_pie_chart(PieChart *);
 extern void free_bar_chart(BarChart *);
-extern void free_line_chart(LineChart *);
+extern void free_line_chart(LineGraph *);
 
 
 /* Globals */
@@ -107,8 +106,7 @@ int main(int argc, char *argv[])
 void initialise(ChartData *c_data, Ui *m_ui)
 {
     /* Set variables */
-    app_msg_extra[0] = '\0';
-    memset(m_ui, 0, sizeof (MainUi));
+    memset(m_ui, 0, sizeof (Ui));
     c_data->pie_data = pie_test;
     c_data->bar_data = bar_test;
     c_data->line_data = line_test;
@@ -119,7 +117,7 @@ void initialise(ChartData *c_data, Ui *m_ui)
 
 /* Final work */
 
-void final(MainUi *m_ui)
+void final(Ui *m_ui)
 {
     /* Clean up */
     if (m_ui->pie_chart != NULL)
@@ -129,7 +127,7 @@ void final(MainUi *m_ui)
 	free_bar_chart(m_ui->bar_chart);
 
     if (m_ui->line_chart != NULL)
-	free_bar_chart(m_ui->line_chart);
+	free_bar_chart(m_ui->line_graph);
 
     return;
 }
