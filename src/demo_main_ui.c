@@ -40,13 +40,9 @@
 #include <string.h>  
 #include <unistd.h>
 #include <errno.h>
-#include <libgen.h>  
 #include <gtk/gtk.h>  
 #include <gdk/gdkkeysyms.h>  
-#include <pthread.h>
-#include <main.h>
-#include <isp.h>
-#include <defs.h>
+#include <demo.h>
 
 
 /* Prototypes */

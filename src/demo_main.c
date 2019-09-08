@@ -55,24 +55,23 @@ void final(Ui *);
 extern void main_ui(ChartData *, Ui *);
 extern void free_pie_chart(PieChart *);
 extern void free_bar_chart(BarChart *);
-extern void free_line_chart(LineGraph *);
+extern void free_line_graph(LineGraph *);
 
 
 /* Globals */
 
 static const char *debug_hdr = "DEBUG-demo_main.c ";
-static const double *pie_test[] = { 150.0, 523.0, 75.0, 350.0, 10.0 };
-static const double *bar_test[][3] = { { 5.0, 25.0, 15.0 }, { 15.0, 25.0, 43.0 } };
-static const double *line_test[][10] = {
-					( 0.0, 0.0 }, 
-					( 1.0, 5.0 }, 
+static const double pie_test[5] = { 150.0, 523.0, 75.0, 350.0, 10.0 };
+static const double bar_test[2][3] = { { 5.0, 25.0, 15.0 }, { 15.0, 25.0, 43.0 } };
+static const double line_test[10][2] = {
+					{ 0.0, 0.0 }, 
+					{ 1.0, 5.0 }, 
 					{ 2.0, 2.0 },
 					{ 3.0, 25.0 },
 					{ 4.0, 30.0 },
 					{ 5.0, 12.0 },
 					{ 6.0, 0.0 },
 					{ 7.0, 18.0 },
-					{ 8.0, 23.0 },
 					{ 9.0, 29.0 },
 					{ 10.0, 15.0 }
 				       };
@@ -86,12 +85,12 @@ int main(int argc, char *argv[])
     ChartData chart_data;
 
     /* Initial work */
-    initialise(&ChartData, &m_ui);
+    initialise(&chart_data, &m_ui);
 
     /* Initialise Gtk */
     gtk_init(&argc, &argv);  
 
-    main_ui(&ChartData, &m_ui);
+    main_ui(&chart_data, &m_ui);
 
     gtk_main();  
 
@@ -107,9 +106,9 @@ void initialise(ChartData *c_data, Ui *m_ui)
 {
     /* Set variables */
     memset(m_ui, 0, sizeof (Ui));
-    c_data->pie_data = pie_test;
-    c_data->bar_data = bar_test;
-    c_data->line_data = line_test;
+    c_data->pie_data = &pie_test;
+    c_data->bar_data = &bar_test;
+    c_data->line_data = &line_test;
 
     return;
 }
@@ -126,8 +125,8 @@ void final(Ui *m_ui)
     if (m_ui->bar_chart != NULL)
 	free_bar_chart(m_ui->bar_chart);
 
-    if (m_ui->line_chart != NULL)
-	free_bar_chart(m_ui->line_graph);
+    if (m_ui->line_graph != NULL)
+	free_line_graph(m_ui->line_graph);
 
     return;
 }

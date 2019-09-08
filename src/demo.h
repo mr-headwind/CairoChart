@@ -94,7 +94,7 @@ typedef struct _demo_ui
 
 typedef struct _chart_data
 {
-    double *pie_data[5];
-    double *bar_data[2][3];
-    double *line_data[2][10];
+    const double (*pie_data)[5];
+    const double (*bar_data)[2][3];
+    const double (*line_data)[10][2];
 } ChartData;
