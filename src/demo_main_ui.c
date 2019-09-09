@@ -41,7 +41,6 @@
 #include <unistd.h>
 #include <errno.h>
 #include <gtk/gtk.h>  
-#include <gdk/gdkkeysyms.h>  
 #include <demo.h>
 
 
@@ -49,10 +48,12 @@
 
 void main_ui(ChartData *, Ui *);
 void create_main_view(Ui *);
-void chart_btns(MainUi *);
-void pie_panel(MainUi *);
-void bar_panel(MainUi *);
-void line_panel(MainUi *);
+void chart_btns(Ui *);
+void set_panel_btn(GtkWidget *, char *, GtkWidget *, int, int, int, int);
+void show_panel(GtkWidget *, Ui *); 
+void pie_panel(Ui *);
+void bar_panel(Ui *);
+void line_panel(Ui *);
 void OnPieChart(GtkWidget*, gpointer);
 void OnBarChart(GtkWidget*, gpointer);
 void OnlineGraph(GtkWidget*, gpointer);
@@ -61,17 +62,13 @@ void OnQuit(GtkWidget*, gpointer);
 extern void set_css();
 
 
-void set_panel_btn(GtkWidget *, char *, GtkWidget *, int, int, int, int);
 void create_label(GtkWidget **, char *, char *, GtkWidget *, int, int, int, int);
 void create_label2(GtkWidget **, char *, char *, GtkWidget *);
 void create_entry(GtkWidget **, char *, GtkWidget *, int, int);
 void create_radio(GtkWidget **, GtkWidget *, char *, char *, GtkWidget *, int, char *, char *);
 void create_cbox(GtkWidget **, char *, const char *[], int, int, GtkWidget *, int, int);
-void show_panel(GtkWidget *, MainUi *); 
-GtkWidget * debug_cntr(GtkWidget *);
 
 extern void log_msg(char*, char*, char*, GtkWidget*);
-extern int version_req_chk(IspData *, MainUi *);
 
 
 /* Globals */
@@ -81,11 +78,12 @@ static const char *debug_hdr = "DEBUG-demo_main_ui.c ";
 
 /* Create the user interface and set the CallBacks */
 
-void main_ui(ChartData *c_data, MainUi *m_ui)
+void main_ui(ChartData *c_data, Ui *m_ui)
 {  
     /* Set up the UI window */
     m_ui->window = gtk_window_new(GTK_WINDOW_TOPLEVEL);  
     g_object_set_data (G_OBJECT (m_ui->window), "ui", m_ui);
+    g_object_set_data (G_OBJECT (m_ui->window), "test_data", c_data);
     gtk_window_set_title(GTK_WINDOW(m_ui->window), TITLE);
     gtk_window_set_position(GTK_WINDOW(m_ui->window), GTK_WIN_POS_CENTER);
     gtk_window_set_default_size(GTK_WINDOW(m_ui->window), 300, 390);
@@ -167,20 +165,20 @@ void chart_btns(Ui *m_ui)
 
     /* Create buttons */
     i = j = 0;
-    m_ui->overview_btn = gtk_button_new_with_label("Pie Chart");  
+    m_ui->pie_btn = gtk_button_new_with_label("Pie Chart");  
     set_panel_btn(m_ui->pie_btn, "pie_btn",  m_ui->btn_panel, i, j, 1, 1);
 
     i++;
-    m_ui->service_btn = gtk_button_new_with_label("Bar Chart");  
+    m_ui->bar_btn = gtk_button_new_with_label("Bar Chart");  
     set_panel_btn(m_ui->bar_btn, "bar_btn",  m_ui->btn_panel, i, j, 1, 1);
 
     i++;
-    m_ui->monitor_btn = gtk_button_new_with_label("Line Graph");  
+    m_ui->line_btn = gtk_button_new_with_label("Line Graph");  
     set_panel_btn(m_ui->line_btn, "line_btn",  m_ui->btn_panel, i, j, 1, 1);
 
     i = 0;
     j++;
-    m_ui->history_btn = gtk_button_new_with_label("Close");  
+    m_ui->close_btn = gtk_button_new_with_label("Close");  
     set_panel_btn(m_ui->close_btn, "close_btn",  m_ui->btn_panel, i, j, 1, 1);
 
     /* Callbacks */
@@ -210,7 +208,7 @@ void set_panel_btn(GtkWidget *btn, char *nm, GtkWidget *cntr,
 
 /* Maintain which panel is visible */
 
-void show_panel(GtkWidget *cntr, MainUi *m_ui) 
+void show_panel(GtkWidget *cntr, Ui *m_ui) 
 {
     if (cntr == m_ui->curr_panel)
     	return;
@@ -225,7 +223,7 @@ void show_panel(GtkWidget *cntr, MainUi *m_ui)
 
 /* Display a pie chart */
 
-void pie_panel(MainUi *m_ui) 
+void pie_panel(Ui *m_ui) 
 {
 
     return;
@@ -234,7 +232,7 @@ void pie_panel(MainUi *m_ui)
 
 /* Display a bar chart */
 
-void bar_panel(MainUi *m_ui) 
+void bar_panel(Ui *m_ui) 
 {
 
     return;
@@ -243,7 +241,7 @@ void bar_panel(MainUi *m_ui)
 
 /* Display a line graph */
 
-void line_panel(MainUi *m_ui) 
+void line_panel(Ui *m_ui) 
 {
 
     return;
@@ -353,47 +351,79 @@ void create_cbox(GtkWidget **cbox, char *nm, const char *arr[], int max, int act
 }
 
 
-/* Debug widget container */
+/* CALLBACKS */
 
-GtkWidget * debug_cntr(GtkWidget *cntr)
+
+/* Callback - Draw a Pie chart */
+
+void OnPieChart(GtkWidget *btn, gpointer user_data)
 {
-    const gchar *widget_name;
-    GtkWidget *widget;
-    GtkWidgetPath *w_path;
+    Ui *m_ui;
+    ChartData *c_data;
 
-    if (! GTK_IS_CONTAINER(cntr))
-    {
-	log_msg("SYS9011", "btn children", NULL, NULL);
-    	return NULL;
-    }
+    /* Get details */
+    m_ui = (Ui *) user_data;
+    c_data = g_object_get_data (G_OBJECT(m_ui->window), "test_data");
 
-    widget_name = gtk_widget_get_name (cntr);
-    printf("%s widget structure for %s\n", debug_hdr, widget_name);
+    /* Initiate pie chart */
+    pie_chart();
 
-    GList *child_widgets = gtk_container_get_children(GTK_CONTAINER (cntr));
-    //printf("%s \tno of children %d\n", debug_hdr, g_list_length(child_widgets));
-
-    child_widgets = g_list_first(child_widgets);
-
-    while (child_widgets != NULL)
-    {
-	widget = child_widgets->data;
-	widget_name = gtk_widget_get_name (widget);
-	printf("%s \tname %s\n", debug_hdr, widget_name);
-
-	w_path = gtk_container_get_path_for_child (GTK_CONTAINER (cntr), widget);
-	printf("%s \tpath %s\n", debug_hdr, gtk_widget_path_to_string (w_path));
-
-	if (GTK_IS_CONTAINER(widget))
-	    debug_cntr(widget);
-
-	if (GTK_IS_LABEL (widget))
-	    break;
-
-	child_widgets = g_list_next(child_widgets);
-    }
-
-    g_list_free (child_widgets);
-
-    return widget;
+    return;
 }
+
+
+/* Callback - Draw a Bar chart */
+
+void OnBarChart(GtkWidget *btn, gpointer user_data)
+{
+    Ui *m_ui;
+    ChartData *c_data;
+
+    /* Get details */
+    m_ui = (Ui *) user_data;
+    c_data = g_object_get_data (G_OBJECT(m_ui->window), "test_data");
+
+    /* Initiate pie chart */
+    bar_chart();
+
+    return;
+}
+
+
+/* Callback - Draw a Line graph */
+
+void OnLineGraph(GtkWidget *btn, gpointer user_data)
+{
+    Ui *m_ui;
+    ChartData *c_data;
+
+    /* Get details */
+    m_ui = (Ui *) user_data;
+    c_data = g_object_get_data (G_OBJECT(m_ui->window), "test_data");
+
+    /* Initiate pie chart */
+    line_graph();
+
+    return;
+}
+
+
+/* Callback - Quit */
+
+void OnQuit(GtkWidget *w, gpointer user_data)
+{
+    GtkWidget *window;
+    Ui *m_ui;
+
+    /* Do some clean up */
+    window = (GtkWidget *) user_data;
+    m_ui = g_object_get_data (G_OBJECT(window), "ui");
+
+    /* Close any open windows */
+
+    /* Main quit */
+    gtk_main_quit();
+
+    return;
+}
+
