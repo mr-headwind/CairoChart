@@ -76,12 +76,15 @@ typedef struct _demo_ui
 
     /* Widgets - pie chart */
     PieChart *pie_chart;
+    GtkWidget *pie_chart_area;
 
     /* Widgets - bar chart */
     BarChart *bar_chart;
+    GtkWidget *bar_chart_area;
 
     /* Widgets - line graph */
     LineGraph *line_graph;
+    GtkWidget *line_graph_area;
 
     /* Callback Handlers */
     int close_hndlr_id;

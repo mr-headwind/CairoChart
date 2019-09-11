@@ -225,6 +225,28 @@ void show_panel(GtkWidget *cntr, Ui *m_ui)
 
 void pie_panel(Ui *m_ui) 
 {
+/* Create main container grid */
+    m_ui->pie_cntr = gtk_grid_new();
+    gtk_widget_set_name(m_ui->pie_cntr, "pie_panel");
+    gtk_grid_set_row_spacing(GTK_GRID (m_ui->pie_cntr), 2);
+    gtk_grid_set_column_spacing(GTK_GRID (m_ui->pie_cntr), 2);
+    gtk_container_set_border_width (GTK_CONTAINER (m_ui->pie_cntr), 2);
+    gtk_widget_set_margin_top (m_ui->pie_cntr, 2);
+    gtk_widget_set_margin_left (m_ui->pie_cntr, 15);
+
+    /* Create drawing area for line graph */
+    m_ui->pie_chart_area = gtk_drawing_area_new();
+    gtk_widget_set_name ( m_ui->pie_chart_area, "draw_pie");
+    gtk_widget_set_margin_top (m_ui->pie_chart_area, 1);
+    gtk_widget_set_size_request (m_ui->pie_chart_area, 250, 160);
+    gtk_widget_set_halign (m_ui->pie_chart_area, GTK_ALIGN_CENTER);
+    gtk_widget_set_valign (m_ui->pie_chart_area, GTK_ALIGN_CENTER);
+    gtk_grid_attach(GTK_GRID (m_ui->pie_cntr), m_ui->pie_chart_area, 0, 0, 1, 1);
+
+    g_signal_connect (m_ui->pie_chart_area, "draw", G_CALLBACK (OnPieExpose), m_ui);
+
+    /* Add to the panel stack */
+    gtk_stack_add_named (GTK_STACK (m_ui->panel_stk), m_ui->pie_cntr, "pie_panel");
 
     return;
 }
