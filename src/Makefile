@@ -20,7 +20,7 @@ CC=cc
 CFLAGS=-I. `pkg-config --cflags gtk+-3.0` 
 CFLAGS2=-Wno-deprecated-declarations
 DEPS = demo.h cairo_chart.h
-OBJ = demo_main.o demo_main_ui.o demo_css.o 
+OBJ = demo_main.o demo_main_ui.o demo_css.o cairo_chart_cb.o cairo_chart.o
 LIBS = `pkg-config --libs gtk+-3.0 cairo`
 LIBS2 = -lm
 

@@ -90,6 +90,7 @@ typedef struct _demo_ui
     int close_hndlr_id;
 
     /* Misc */
+    GtkWidget *curr_panel;
 } Ui;
 
 

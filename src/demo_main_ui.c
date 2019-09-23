@@ -56,7 +56,7 @@ void bar_panel(Ui *);
 void line_panel(Ui *);
 void OnPieChart(GtkWidget*, gpointer);
 void OnBarChart(GtkWidget*, gpointer);
-void OnlineGraph(GtkWidget*, gpointer);
+void OnLineGraph(GtkWidget*, gpointer);
 void OnQuit(GtkWidget*, gpointer);
 
 extern void set_css();
