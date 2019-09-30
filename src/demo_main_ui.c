@@ -60,6 +60,7 @@ void OnLineGraph(GtkWidget*, gpointer);
 void OnQuit(GtkWidget*, gpointer);
 
 extern void set_css();
+extern gboolean OnPieExpose(GtkWidget *, cairo_t *, gpointer);
 
 
 void create_label(GtkWidget **, char *, char *, GtkWidget *, int, int, int, int);

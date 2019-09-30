@@ -38,10 +38,7 @@
 #include <cairo/cairo.h>
 #include <math.h>
 #include <ctype.h>
-#include <pthread.h>
 #include <main.h>
-#include <isp.h>
-#include <defs.h>
 
 
 /* Defines */
@@ -50,6 +47,8 @@
 
 
 /* Prototypes */
+
+gboolean OnPieExpose(GtkWidget *, cairo_t *, gpointer);
 
 void OnOverview(GtkWidget*, gpointer);
 void OnService(GtkWidget*, gpointer);
@@ -68,7 +67,6 @@ void OnCalendar(GtkWidget *, gpointer);
 int OnSetRefresh(GtkWidget*, GdkEvent *, gpointer);
 void OnRefreshTxt(GtkEditable *, gchar *, gint, gpointer, gpointer);
 void OnViewLog(GtkWidget*, gpointer);
-gboolean OnOvExpose(GtkWidget *, cairo_t *, gpointer);
 gboolean OnHistExpose(GtkWidget *, cairo_t *, gpointer);
 void OnQuit(GtkWidget*, gpointer);
 
@@ -521,7 +519,7 @@ void OnViewLog(GtkWidget *view_log, gpointer user_data)
 
 /* Callback - Cairo charts displaying usage information */
 
-gboolean OnOvExpose(GtkWidget *widget, cairo_t *cr, gpointer user_data)
+gboolean OnPieExpose(GtkWidget *widget, cairo_t *cr, gpointer user_data)
 {  
     MainUi *m_ui;
     GtkAllocation allocation, pseudo_alloc;
