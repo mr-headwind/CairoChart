@@ -38,7 +38,7 @@
 #include <cairo/cairo.h>
 #include <math.h>
 #include <ctype.h>
-#include <main.h>
+#include <cairo_chart.h>
 
 
 /* Defines */

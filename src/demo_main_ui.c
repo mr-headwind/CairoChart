@@ -226,7 +226,7 @@ void show_panel(GtkWidget *cntr, Ui *m_ui)
 
 void pie_panel(Ui *m_ui) 
 {
-/* Create main container grid */
+    /* Create main container grid */
     m_ui->pie_cntr = gtk_grid_new();
     gtk_widget_set_name(m_ui->pie_cntr, "pie_panel");
     gtk_grid_set_row_spacing(GTK_GRID (m_ui->pie_cntr), 2);
