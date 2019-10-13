@@ -46,7 +46,7 @@
 
 /* Includes */
 
-#include <cairo_chart.h>
+#include <../framework/cairo_chart.h>
 
 
 /* Structure to contain demo main interface items */

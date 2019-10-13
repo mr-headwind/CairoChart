@@ -17,10 +17,11 @@
 #  along with CairoChart.  If not, see <http://www.gnu.org/licenses/>.
 
 CC=cc
+FW=../framework
 CFLAGS=-I. `pkg-config --cflags gtk+-3.0` 
 CFLAGS2=-Wno-deprecated-declarations
-DEPS = demo.h cairo_chart.h
-OBJ = demo_main.o demo_main_ui.o demo_css.o cairo_chart_cb.o cairo_chart.o
+DEPS = demo.h $(FW)/cairo_chart.h
+OBJ = demo_main.o demo_main_ui.o demo_css.o $(FW)/cairo_chart_cb.o $(FW)/cairo_chart.o
 LIBS = `pkg-config --libs gtk+-3.0 cairo`
 LIBS2 = -lm
 
