@@ -20,7 +20,7 @@
 
 
 /*
-** Description: Contrl functions to create and display each type of chart.
+** Description: Control functions to create and display each type of chart.
 **
 ** Author:	Anthony Buckley
 **
@@ -79,43 +79,43 @@ static const char *debug_hdr = "DEBUG-demo_main_ui.c ";
 
 /* Create the user interface and set the CallBacks */
 
-void main_ui(ChartData *c_data, Ui *m_ui)
+void main_ui(ChartData *c_data, Ui *ui)
 {  
     /* Set up the UI window */
-    m_ui->window = gtk_window_new(GTK_WINDOW_TOPLEVEL);  
-    g_object_set_data (G_OBJECT (m_ui->window), "ui", m_ui);
-    g_object_set_data (G_OBJECT (m_ui->window), "test_data", c_data);
-    gtk_window_set_title(GTK_WINDOW(m_ui->window), TITLE);
-    gtk_window_set_position(GTK_WINDOW(m_ui->window), GTK_WIN_POS_CENTER);
-    gtk_window_set_default_size(GTK_WINDOW(m_ui->window), 300, 390);
-    gtk_container_set_border_width(GTK_CONTAINER(m_ui->window), 2);
+    ui->window = gtk_window_new(GTK_WINDOW_TOPLEVEL);  
+    g_object_set_data (G_OBJECT (ui->window), "ui", ui);
+    g_object_set_data (G_OBJECT (ui->window), "test_data", c_data);
+    gtk_window_set_title(GTK_WINDOW(ui->window), TITLE);
+    gtk_window_set_position(GTK_WINDOW(ui->window), GTK_WIN_POS_CENTER);
+    gtk_window_set_default_size(GTK_WINDOW(ui->window), 300, 390);
+    gtk_container_set_border_width(GTK_CONTAINER(ui->window), 2);
 
     /* Main view */
-    m_ui->mbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 1);
-    gtk_widget_set_halign(GTK_WIDGET (m_ui->mbox), GTK_ALIGN_START);
+    ui->mbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 1);
+    gtk_widget_set_halign(GTK_WIDGET (ui->mbox), GTK_ALIGN_START);
 
     /* CONTROL PANEL */
-    create_main_view(m_ui);
+    create_main_view(ui);
 
     /* INFORMATION AREA AT BOTTOM OF WINDOW */
-    m_ui->status_info = gtk_label_new(NULL);
-    gtk_widget_set_name (GTK_WIDGET (m_ui->status_info), "status");
-    gtk_widget_set_margin_top(GTK_WIDGET (m_ui->status_info), 5);
-    gtk_label_set_text(GTK_LABEL (m_ui->status_info), " ");
-    gtk_widget_set_halign(GTK_WIDGET (m_ui->status_info), GTK_ALIGN_START);
+    ui->status_info = gtk_label_new(NULL);
+    gtk_widget_set_name (GTK_WIDGET (ui->status_info), "status");
+    gtk_widget_set_margin_top(GTK_WIDGET (ui->status_info), 5);
+    gtk_label_set_text(GTK_LABEL (ui->status_info), " ");
+    gtk_widget_set_halign(GTK_WIDGET (ui->status_info), GTK_ALIGN_START);
 
     /* Combine everything onto the window */
-    gtk_box_pack_start (GTK_BOX (m_ui->mbox), m_ui->ctrl_box, FALSE, FALSE, 0);
-    gtk_box_pack_start (GTK_BOX (m_ui->mbox), m_ui->status_info, FALSE, FALSE, 0);
+    gtk_box_pack_start (GTK_BOX (ui->mbox), ui->ctrl_box, FALSE, FALSE, 0);
+    gtk_box_pack_start (GTK_BOX (ui->mbox), ui->status_info, FALSE, FALSE, 0);
 
-    gtk_container_add(GTK_CONTAINER(m_ui->window), m_ui->mbox);  
+    gtk_container_add(GTK_CONTAINER(ui->window), ui->mbox);  
 
     /* Exit when window closed */
-    g_signal_connect(m_ui->window, "destroy", G_CALLBACK(OnQuit), m_ui->window);  
+    g_signal_connect(ui->window, "destroy", G_CALLBACK(OnQuit), ui->window);  
 
     /* Show window */
     set_css();
-    gtk_widget_show_all(m_ui->window);
+    gtk_widget_show_all(ui->window);
 
     return;
 }
@@ -123,27 +123,27 @@ void main_ui(ChartData *c_data, Ui *m_ui)
 
 /* Main view */
 
-void create_main_view(Ui *m_ui)
+void create_main_view(Ui *ui)
 {  
     /* New container for main view */
-    m_ui->ctrl_box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 1);
+    ui->ctrl_box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 1);
 
     /* Button panel */
-    chart_btns(m_ui);
+    chart_btns(ui);
 
     /* Stack widget to attach the different panels to */
-    m_ui->panel_stk = gtk_stack_new();
-    gtk_stack_set_homogeneous(GTK_STACK (m_ui->panel_stk), TRUE);
-    gtk_stack_set_transition_type (GTK_STACK (m_ui->panel_stk), GTK_STACK_TRANSITION_TYPE_NONE); 
+    ui->panel_stk = gtk_stack_new();
+    gtk_stack_set_homogeneous(GTK_STACK (ui->panel_stk), TRUE);
+    gtk_stack_set_transition_type (GTK_STACK (ui->panel_stk), GTK_STACK_TRANSITION_TYPE_NONE); 
 
     /* Chart panels */
-    pie_panel(m_ui);
-    bar_panel(m_ui);
-    line_panel(m_ui);
+    pie_panel(ui);
+    bar_panel(ui);
+    line_panel(ui);
 
     /* Combine everything onto the main view */
-    gtk_box_pack_start (GTK_BOX (m_ui->ctrl_box), m_ui->btn_panel, FALSE, FALSE, 0);
-    gtk_box_pack_start (GTK_BOX (m_ui->ctrl_box), m_ui->panel_stk, TRUE, TRUE, 0);
+    gtk_box_pack_start (GTK_BOX (ui->ctrl_box), ui->btn_panel, FALSE, FALSE, 0);
+    gtk_box_pack_start (GTK_BOX (ui->ctrl_box), ui->panel_stk, TRUE, TRUE, 0);
 
     return;
 }
@@ -151,42 +151,42 @@ void create_main_view(Ui *m_ui)
 
 /* Chart button (menu) panel */
 
-void chart_btns(Ui *m_ui)
+void chart_btns(Ui *ui)
 {  
     int i, j;
 
     /* Create grid to contain function buttons */
-    m_ui->btn_panel = gtk_grid_new();
-    gtk_widget_set_name(m_ui->btn_panel, "btn_panel");
-    gtk_grid_set_row_spacing(GTK_GRID (m_ui->btn_panel), 2);
-    gtk_grid_set_column_spacing(GTK_GRID (m_ui->btn_panel), 2);
-    gtk_container_set_border_width (GTK_CONTAINER (m_ui->btn_panel), 2);
-    gtk_widget_set_hexpand (m_ui->btn_panel, TRUE);
-    gtk_widget_set_vexpand (m_ui->btn_panel, TRUE);
+    ui->btn_panel = gtk_grid_new();
+    gtk_widget_set_name(ui->btn_panel, "btn_panel");
+    gtk_grid_set_row_spacing(GTK_GRID (ui->btn_panel), 2);
+    gtk_grid_set_column_spacing(GTK_GRID (ui->btn_panel), 2);
+    gtk_container_set_border_width (GTK_CONTAINER (ui->btn_panel), 2);
+    gtk_widget_set_hexpand (ui->btn_panel, TRUE);
+    gtk_widget_set_vexpand (ui->btn_panel, TRUE);
 
     /* Create buttons */
     i = j = 0;
-    m_ui->pie_btn = gtk_button_new_with_label("Pie Chart");  
-    set_panel_btn(m_ui->pie_btn, "pie_btn",  m_ui->btn_panel, i, j, 1, 1);
+    ui->pie_btn = gtk_button_new_with_label("Pie Chart");  
+    set_panel_btn(ui->pie_btn, "pie_btn",  ui->btn_panel, i, j, 1, 1);
 
     i++;
-    m_ui->bar_btn = gtk_button_new_with_label("Bar Chart");  
-    set_panel_btn(m_ui->bar_btn, "bar_btn",  m_ui->btn_panel, i, j, 1, 1);
+    ui->bar_btn = gtk_button_new_with_label("Bar Chart");  
+    set_panel_btn(ui->bar_btn, "bar_btn",  ui->btn_panel, i, j, 1, 1);
 
     i++;
-    m_ui->line_btn = gtk_button_new_with_label("Line Graph");  
-    set_panel_btn(m_ui->line_btn, "line_btn",  m_ui->btn_panel, i, j, 1, 1);
+    ui->line_btn = gtk_button_new_with_label("Line Graph");  
+    set_panel_btn(ui->line_btn, "line_btn",  ui->btn_panel, i, j, 1, 1);
 
     i = 0;
     j++;
-    m_ui->close_btn = gtk_button_new_with_label("Close");  
-    set_panel_btn(m_ui->close_btn, "close_btn",  m_ui->btn_panel, i, j, 1, 1);
+    ui->close_btn = gtk_button_new_with_label("Close");  
+    set_panel_btn(ui->close_btn, "close_btn",  ui->btn_panel, i, j, 1, 1);
 
     /* Callbacks */
-    g_signal_connect (m_ui->pie_btn, "clicked", G_CALLBACK (OnPieChart), m_ui);
-    g_signal_connect (m_ui->bar_btn, "clicked", G_CALLBACK (OnBarChart), m_ui);
-    g_signal_connect (m_ui->line_btn, "clicked", G_CALLBACK (OnLineGraph), m_ui);
-    g_signal_connect (m_ui->close_btn, "clicked", G_CALLBACK (OnQuit), m_ui->window);
+    g_signal_connect (ui->pie_btn, "clicked", G_CALLBACK (OnPieChart), ui);
+    g_signal_connect (ui->bar_btn, "clicked", G_CALLBACK (OnBarChart), ui);
+    g_signal_connect (ui->line_btn, "clicked", G_CALLBACK (OnLineGraph), ui);
+    g_signal_connect (ui->close_btn, "clicked", G_CALLBACK (OnQuit), ui->window);
 
     return;
 }
@@ -209,14 +209,14 @@ void set_panel_btn(GtkWidget *btn, char *nm, GtkWidget *cntr,
 
 /* Maintain which panel is visible */
 
-void show_panel(GtkWidget *cntr, Ui *m_ui) 
+void show_panel(GtkWidget *cntr, Ui *ui) 
 {
-    if (cntr == m_ui->curr_panel)
+    if (cntr == ui->curr_panel)
     	return;
 
-    gtk_stack_set_visible_child (GTK_STACK (m_ui->panel_stk), cntr);
+    gtk_stack_set_visible_child (GTK_STACK (ui->panel_stk), cntr);
 
-    m_ui->curr_panel = cntr;
+    ui->curr_panel = cntr;
 
     return;
 }
@@ -224,29 +224,27 @@ void show_panel(GtkWidget *cntr, Ui *m_ui)
 
 /* Display a pie chart */
 
-void pie_panel(Ui *m_ui) 
+void pie_panel(Ui *ui) 
 {
     /* Create main container grid */
-    m_ui->pie_cntr = gtk_grid_new();
-    gtk_widget_set_name(m_ui->pie_cntr, "pie_panel");
-    gtk_grid_set_row_spacing(GTK_GRID (m_ui->pie_cntr), 2);
-    gtk_grid_set_column_spacing(GTK_GRID (m_ui->pie_cntr), 2);
-    gtk_container_set_border_width (GTK_CONTAINER (m_ui->pie_cntr), 2);
-    gtk_widget_set_margin_top (m_ui->pie_cntr, 2);
-    gtk_widget_set_margin_left (m_ui->pie_cntr, 15);
-
-    /* Create drawing area for pie chart */
+    ui->pie_cntr = gtk_grid_new();
+    gtk_widget_set_name(ui->pie_cntr, "pie_panel");
+    gtk_grid_set_row_spacing(GTK_GRID (ui->pie_cntr), 2);
+    gtk_grid_set_column_spacing(GTK_GRID (ui->pie_cntr), 2);
+    gtk_container_set_border_width (GTK_CONTAINER (ui->pie_cntr), 2);
+    gtk_widget_set_margin_top (ui->pie_cntr, 2);
+    gtk_widget_set_margin_left (ui->pie_cntr, 15);
 
 
     /*
-    ** framework call
+    ** Framework call to create drawing area for pie chart
     */
-    m_ui->pie_chart_area = cfw_gtk_pie_chart((void *) m_ui, 250, 160);
+    ui->pie_chart_area = cfw_gtk_pie_chart((void *) ui, 250, 160);
 
 
     /* Attach containers */
-    gtk_grid_attach(GTK_GRID (m_ui->pie_cntr), m_ui->pie_chart_area, 0, 0, 1, 1);
-    gtk_stack_add_named (GTK_STACK (m_ui->panel_stk), m_ui->pie_cntr, "pie_panel");
+    gtk_grid_attach(GTK_GRID (ui->pie_cntr), ui->pie_chart_area, 0, 0, 1, 1);
+    gtk_stack_add_named (GTK_STACK (ui->panel_stk), ui->pie_cntr, "pie_panel");
 
     return;
 }
@@ -254,8 +252,27 @@ void pie_panel(Ui *m_ui)
 
 /* Display a bar chart */
 
-void bar_panel(Ui *m_ui) 
+void bar_panel(Ui *ui) 
 {
+    /* Create main container grid */
+    ui->bar_cntr = gtk_grid_new();
+    gtk_widget_set_name(ui->bar_cntr, "bar_panel");
+    gtk_grid_set_row_spacing(GTK_GRID (ui->bar_cntr), 2);
+    gtk_grid_set_column_spacing(GTK_GRID (ui->bar_cntr), 2);
+    gtk_container_set_border_width (GTK_CONTAINER (ui->bar_cntr), 2);
+    gtk_widget_set_margin_top (ui->bar_cntr, 2);
+    gtk_widget_set_margin_left (ui->bar_cntr, 15);
+
+
+    /*
+    ** Framework call to create drawing area for bar chart
+    */
+    ui->bar_chart_area = cfw_gtk_bar_chart((void *) ui, 250, 160);
+
+
+    /* Attach containers */
+    gtk_grid_attach(GTK_GRID (ui->bar_cntr), ui->bar_chart_area, 0, 0, 1, 1);
+    gtk_stack_add_named (GTK_STACK (ui->panel_stk), ui->bar_cntr, "bar_panel");
 
     return;
 }
@@ -263,8 +280,27 @@ void bar_panel(Ui *m_ui)
 
 /* Display a line graph */
 
-void line_panel(Ui *m_ui) 
+void line_panel(Ui *ui) 
 {
+    /* Create main container grid */
+    ui->line_cntr = gtk_grid_new();
+    gtk_widget_set_name(ui->line_cntr, "line_panel");
+    gtk_grid_set_row_spacing(GTK_GRID (ui->line_cntr), 2);
+    gtk_grid_set_column_spacing(GTK_GRID (ui->line_cntr), 2);
+    gtk_container_set_border_width (GTK_CONTAINER (ui->line_cntr), 2);
+    gtk_widget_set_margin_top (ui->line_cntr, 2);
+    gtk_widget_set_margin_left (ui->line_cntr, 15);
+
+
+    /*
+    ** Framework call to create drawing area for line graph
+    */
+    ui->line_graph_area = cfw_gtk_line_graph((void *) ui, 250, 160);
+
+
+    /* Attach containers */
+    gtk_grid_attach(GTK_GRID (ui->line_cntr), ui->line_graph_area, 0, 0, 1, 1);
+    gtk_stack_add_named (GTK_STACK (ui->panel_stk), ui->line_cntr, "line_panel");
 
     return;
 }
@@ -380,12 +416,12 @@ void create_cbox(GtkWidget **cbox, char *nm, const char *arr[], int max, int act
 
 void OnPieChart(GtkWidget *btn, gpointer user_data)
 {
-    Ui *m_ui;
+    Ui *ui;
     ChartData *c_data;
 
     /* Get details */
-    m_ui = (Ui *) user_data;
-    c_data = g_object_get_data (G_OBJECT(m_ui->window), "test_data");
+    ui = (Ui *) user_data;
+    c_data = g_object_get_data (G_OBJECT(ui->window), "test_data");
 
     /* Initiate pie chart */
     pie_chart();
@@ -398,12 +434,12 @@ void OnPieChart(GtkWidget *btn, gpointer user_data)
 
 void OnBarChart(GtkWidget *btn, gpointer user_data)
 {
-    Ui *m_ui;
+    Ui *ui;
     ChartData *c_data;
 
     /* Get details */
-    m_ui = (Ui *) user_data;
-    c_data = g_object_get_data (G_OBJECT(m_ui->window), "test_data");
+    ui = (Ui *) user_data;
+    c_data = g_object_get_data (G_OBJECT(ui->window), "test_data");
 
     /* Initiate pie chart */
     bar_chart();
@@ -416,12 +452,12 @@ void OnBarChart(GtkWidget *btn, gpointer user_data)
 
 void OnLineGraph(GtkWidget *btn, gpointer user_data)
 {
-    Ui *m_ui;
+    Ui *ui;
     ChartData *c_data;
 
     /* Get details */
-    m_ui = (Ui *) user_data;
-    c_data = g_object_get_data (G_OBJECT(m_ui->window), "test_data");
+    ui = (Ui *) user_data;
+    c_data = g_object_get_data (G_OBJECT(ui->window), "test_data");
 
     /* Initiate pie chart */
     line_graph();
@@ -435,11 +471,11 @@ void OnLineGraph(GtkWidget *btn, gpointer user_data)
 void OnQuit(GtkWidget *w, gpointer user_data)
 {
     GtkWidget *window;
-    Ui *m_ui;
+    Ui *ui;
 
     /* Do some clean up */
     window = (GtkWidget *) user_data;
-    m_ui = g_object_get_data (G_OBJECT(window), "ui");
+    ui = g_object_get_data (G_OBJECT(window), "ui");
 
     /* Close any open windows */
 

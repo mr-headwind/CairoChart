@@ -101,22 +101,22 @@ void free_line_graph(LineGraph *);
 
 int main(int argc, char *argv[])
 {  
-    Ui m_ui;
+    Ui ui;
 
     /* Initial work */
-    initialise(&m_ui);
+    initialise(&ui);
 
     /* Initialise Gtk */
     gtk_init(&argc, &argv);  
 
     /* Create user interface */
-    main_ui(&m_ui);
+    main_ui(&ui);
 
     /* Start main loop */
     gtk_main();  
 
     /* Final processing */
-    final(&m_ui);
+    final(&ui);
 
     exit(0);
 }  
@@ -124,10 +124,10 @@ int main(int argc, char *argv[])
 
 /* Initial work */
 
-void initialise(Ui *m_ui)
+void initialise(Ui *ui)
 {
     /* Set variables */
-    memset(m_ui, 0, sizeof (Ui));
+    memset(ui, 0, sizeof (Ui));
 
     /*
     ** Application code
@@ -139,17 +139,17 @@ void initialise(Ui *m_ui)
 
 /* Final work */
 
-void final(Ui *m_ui)
+void final(Ui *ui)
 {
     /* Clean up as required */
-    if (m_ui->pie_chart != NULL)
-	free_pie_chart(m_ui->pie_chart);
+    if (ui->pie_chart != NULL)
+	free_pie_chart(ui->pie_chart);
 
-    if (m_ui->bar_chart != NULL)
-	free_bar_chart(m_ui->bar_chart);
+    if (ui->bar_chart != NULL)
+	free_bar_chart(ui->bar_chart);
 
-    if (m_ui->line_graph != NULL)
-	free_line_graph(m_ui->line_graph);
+    if (ui->line_graph != NULL)
+	free_line_graph(ui->line_graph);
 
     /*
     ** Application code
@@ -161,11 +161,11 @@ void final(Ui *m_ui)
 
 /* Create the user interface and set the CallBacks */
 
-void main_ui(Ui *m_ui)
+void main_ui(Ui *ui)
 {  
     /* Set up the UI window */
-    m_ui->window = gtk_window_new(GTK_WINDOW_TOPLEVEL);  
-    g_object_set_data (G_OBJECT (m_ui->window), "ui", m_ui);
+    ui->window = gtk_window_new(GTK_WINDOW_TOPLEVEL);  
+    g_object_set_data (G_OBJECT (ui->window), "ui", ui);
 
 
     /*
@@ -173,24 +173,24 @@ void main_ui(Ui *m_ui)
     */
 
     /*
-    ** Chart widgets as required
+    ** Framework call to create Chart widgets as required
     */
 
-    m_ui->pie_chart_area = cfw_gtk_pie_chart((void *) m_ui, NULL, NULL);		// No size request
-    m_ui->pie_chart_area = cfw_gtk_pie_chart((void *) m_ui, 250, 160);			// Set a size request;
+    ui->pie_chart_area = cfw_gtk_pie_chart((void *) ui, NULL, NULL);		// Without size request
+    ui->pie_chart_area = cfw_gtk_pie_chart((void *) ui, 250, 160);		// With size request;
 
-    m_ui->bar_chart_area = cfw_gtk_bar_chart((void *) m_ui, NULL, NULL);		// No size request
-    m_ui->bar_chart_area = cfw_gtk_bar_chart((void *) m_ui, 250, 160);			// Set a size request;
+    ui->bar_chart_area = cfw_gtk_bar_chart((void *) ui, NULL, NULL);		// Without size request
+    ui->bar_chart_area = cfw_gtk_bar_chart((void *) ui, 250, 160);		// With size request;
 
-    m_ui->line_graph_area = cfw_gtk_line_graph((void *) m_ui, NULL, NULL);		// No size request
-    m_ui->line_graph_area = cfw_gtk_line_graph((void *) m_ui, 250, 160);		// Set a size request;
+    ui->line_graph_area = cfw_gtk_line_graph((void *) ui, NULL, NULL);		// Without size request
+    ui->line_graph_area = cfw_gtk_line_graph((void *) ui, 250, 160);		// With size request;
 
 
     /* Exit when window closed */
-    g_signal_connect(m_ui->window, "destroy", G_CALLBACK(OnQuit), m_ui->window);  
+    g_signal_connect(ui->window, "destroy", G_CALLBACK(OnQuit), ui->window);  
 
     /* Show window */
-    gtk_widget_show_all(m_ui->window);
+    gtk_widget_show_all(ui->window);
 
     return;
 }

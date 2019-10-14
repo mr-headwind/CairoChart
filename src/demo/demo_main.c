@@ -25,7 +25,8 @@
 ** Author:	Anthony Buckley
 **
 ** Description:
-**  	Main application control for CairoChart - a Cairo charting toolkit
+**	A demo program to show how to use CairoChart - a Cairo charting framework toolkit.
+**  	Main program control functions.
 **
 ** History
 **	21-Aug-2019	Initial code
@@ -81,20 +82,20 @@ static const double line_test[10][2] = {
 
 int main(int argc, char *argv[])
 {  
-    Ui m_ui;
+    Ui ui;
     ChartData chart_data;
 
     /* Initial work */
-    initialise(&chart_data, &m_ui);
+    initialise(&chart_data, &ui);
 
     /* Initialise Gtk */
     gtk_init(&argc, &argv);  
 
-    main_ui(&chart_data, &m_ui);
+    main_ui(&chart_data, &ui);
 
     gtk_main();  
 
-    final(&m_ui);
+    final(&ui);
 
     exit(0);
 }  
@@ -102,10 +103,10 @@ int main(int argc, char *argv[])
 
 /* Initial work */
 
-void initialise(ChartData *c_data, Ui *m_ui)
+void initialise(ChartData *c_data, Ui *ui)
 {
     /* Set variables */
-    memset(m_ui, 0, sizeof (Ui));
+    memset(ui, 0, sizeof (Ui));
     c_data->pie_data = &pie_test;
     c_data->bar_data = &bar_test;
     c_data->line_data = &line_test;
@@ -116,17 +117,17 @@ void initialise(ChartData *c_data, Ui *m_ui)
 
 /* Final work */
 
-void final(Ui *m_ui)
+void final(Ui *ui)
 {
     /* Clean up */
-    if (m_ui->pie_chart != NULL)
-	free_pie_chart(m_ui->pie_chart);
+    if (ui->pie_chart != NULL)
+	free_pie_chart(ui->pie_chart);
 
-    if (m_ui->bar_chart != NULL)
-	free_bar_chart(m_ui->bar_chart);
+    if (ui->bar_chart != NULL)
+	free_bar_chart(ui->bar_chart);
 
-    if (m_ui->line_graph != NULL)
-	free_line_graph(m_ui->line_graph);
+    if (ui->line_graph != NULL)
+	free_line_graph(ui->line_graph);
 
     return;
 }
