@@ -112,6 +112,24 @@ int main(int argc, char *argv[])
     /* Create user interface */
     main_ui(&ui);
 
+
+
+    /*
+    **  The location of chart creation (object) function calls will be very much application dependent.
+    **  The code shown below only portrays the function calls and arguments to provide.
+    **  For a more specific and realistic approach, see the provided demonstration code.
+    **  Note that these calls do not do any drawing. Only chart structures (pseudo objects).
+    */
+
+    /* Create pie chart */
+    //m_ui->pie_chart = pie_chart_create(NULL, 0, FALSE, NULL, 0);
+    //m_ui->pie_chart = pie_chart_create(NULL, 0, TRUE, NULL, 0);
+    //m_ui->pie_chart = pie_chart_create("Quota Distribution", 0, FALSE, &DARK_BLUE, 9, TRUE);
+    ui->pie_chart = pie_chart_create("Title", total_val, legend_opt, &DARK_BLUE, text_sz, label_opt, pie_data);
+
+
+
+
     /* Start main loop */
     gtk_main();  
 
