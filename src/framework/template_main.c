@@ -27,7 +27,8 @@
 ** Description:
 **  	Main application template for using the framework. This is a guide only to highlight the
 **      structure of calls and layout required to create charts. The demo application provides executable
-**      functionality to better demonstrate possibilities.
+**      functionality to better demonstrate possibilities. Both are provided as a guide only, the overall 
+**	Application structure and layout will vary by application and is at the discretion of developers.
 **
 ** History
 **	12-Oct-2019	Initial code
@@ -86,6 +87,16 @@ void initialise(Ui *);
 void final(Ui *);
 void main_ui(Ui *);
 
+
+/*
+** Application dependent
+*/
+
+void get_pie_data(&pie_data, &pie_arr_sz);
+
+
+extern PieChart * pie_chart_setup(char *, const GdkRGBA *, int, int, int, double **, int, Ui *);
+
 /*
 ** User code to free charts as required 
 */
@@ -102,6 +113,8 @@ void free_line_graph(LineGraph *);
 int main(int argc, char *argv[])
 {  
     Ui ui;
+    double *pie_data_arr;
+    int pie_arr_sz.
 
     /* Initial work */
     initialise(&ui);
@@ -114,6 +127,10 @@ int main(int argc, char *argv[])
 
 
 
+    /* Assemble pie chart data */
+    get_pie_data(&pie_data_arr, &pie_arr_sz);
+
+
     /*
     **  The location of chart creation (object) function calls will be very much application dependent.
     **  The code shown below only portrays the function calls and arguments to provide.
@@ -121,11 +138,12 @@ int main(int argc, char *argv[])
     **  Note that these calls do not do any drawing. Only chart structures (pseudo objects).
     */
 
-    /* Create pie chart */
-    //m_ui->pie_chart = pie_chart_create(NULL, 0, FALSE, NULL, 0);
-    //m_ui->pie_chart = pie_chart_create(NULL, 0, TRUE, NULL, 0);
-    //m_ui->pie_chart = pie_chart_create("Quota Distribution", 0, FALSE, &DARK_BLUE, 9, TRUE);
-    ui->pie_chart = pie_chart_create("Title", total_val, legend_opt, &DARK_BLUE, text_sz, label_opt, pie_data);
+    /* Create pie chart - see function code for argument details */
+    ui->pie_chart = pie_chart_setup("Title", 
+    				    &DARK_BLUE, text_sz, 
+    				    legend_opt, label_opt, 
+    				    &pie_data_arr, pie_arr_sz,
+    				    &ui);
 
 
 
@@ -209,6 +227,19 @@ void main_ui(Ui *ui)
 
     /* Show window */
     gtk_widget_show_all(ui->window);
+
+    return;
+}
+
+
+/* 
+** Collect data for the pie chart. Application dependent, but ultimatelly must end up with a pointer to an 
+** array of doubles and the number of entries.
+*/
+
+void get_pie_data(double **pie_data, int *arr_sz)
+{  
+    //*pie_data = malloc(entries * sizeof(double));
 
     return;
 }

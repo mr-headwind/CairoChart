@@ -1,20 +1,20 @@
 /*
-**  Copyright (C) 2017 Anthony Buckley
+**  Copyright (C) 2019 Anthony Buckley
 ** 
-**  This file is part of Inodeum.
+**  This file is part of CairoChart.
 ** 
-**  Inodeum is free software: you can redistribute it and/or modify
+**  CairoChart is free software: you can redistribute it and/or modify
 **  it under the terms of the GNU General Public License as published by
 **  the Free Software Foundation, either version 3 of the License, or
 **  (at your option) any later version.
 **  
-**  Inodeum is distributed in the hope that it will be useful,
+**  CairoChart is distributed in the hope that it will be useful,
 **  but WITHOUT ANY WARRANTY; without even the implied warranty of
 **  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 **  GNU General Public License for more details.
 **  
 **  You should have received a copy of the GNU General Public License
-**  along with Inodeum.  If not, see <http://www.gnu.org/licenses/>.
+**  along with CairoChart.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 
@@ -24,7 +24,7 @@
 ** Author:	Anthony Buckley
 **
 ** History
-**	28-Jul-2017	Initial code
+**	21-Oct-2019	Initial code
 **
 */
 
@@ -42,7 +42,6 @@
 #include <cairo/cairo.h>
 #include <cairo_chart.h>
 #include <cairo-xlib.h>
-#include <defs.h>
 
 
 /* Defines */
@@ -57,6 +56,9 @@ PieChart * pie_chart_create(char *, double, int, const GdkRGBA *, int, int);
 int pie_slice_create(PieChart *, char *, double, const GdkRGBA *, const GdkRGBA *, int);
 void free_pie_chart(PieChart *);
 void free_slices(gpointer);
+
+
+
 int draw_pie_chart(cairo_t *, PieChart *, GtkAllocation *);
 int pie_chart_title(cairo_t *, PieChart *, GtkAllocation *, GtkAlign, GtkAlign);
 void pc_drawing(cairo_t *, PieChart *, double, double, double, double);
@@ -114,12 +116,39 @@ char * dtos(double, int);
 /* Globals */
 
 static const char *debug_hdr = "DEBUG-cairo_chart.c ";
+/*
 static const double lgd_rect_width = 20.0;
 static const double lgd_buf = 5.0;
 static const double r_rad = 0.7;
 static const long mk_length = 5.0;
 static const double axis_buf = 5.0;
+*/
 
+
+
+/* Set up pie chart structures */
+
+PieChart * pie_chart_setup(char *title, 
+			   const GdkRGBA *txt_colour, int txt_sz, 
+			   int legend, int lbl_opt,
+			   double **pie_data_arr, int pie_arr_sz,
+			   Ui *ui)
+{
+    PieChart *pc;
+    double total_val;
+
+    /* Application dependent - if the chart is being refreshed, need to free it first */
+    if (ui->pie_chart != NULL)
+    	free_pie_chart(ui->pie_chart);
+
+    /* Determine the total value */
+
+    /* Create chart */
+    pc = pie_chart_create(title, &DARK_BLUE, txt_sz, total_val, legend, lbl_opt);
+
+
+    return pc;
+}
 
 
 /* Create and initialise a new pie chart */
@@ -131,8 +160,9 @@ static const double axis_buf = 5.0;
 // . Legend is either TRUE or FALSE.
 // . Text size is optional (0) and will default to 12.
 
-PieChart * pie_chart_create(char *title, double total_val, int legend, 
-			    const GdkRGBA *txt_colour, int txt_sz, int lbl_opt)
+PieChart * pie_chart_create(char *title, 
+			    const GdkRGBA *txt_colour, int txt_sz, 
+			    double total_val, int legend, int lbl_opt)
 {
     PieChart *pc;
 
