@@ -127,7 +127,7 @@ int main(int argc, char *argv[])
 
 
 
-    /* Assemble pie chart data */
+    /* User code - Assemble pie chart data */
     get_pie_data(&pie_data_arr, &pie_arr_sz);
 
 
@@ -136,6 +136,7 @@ int main(int argc, char *argv[])
     **  The code shown below only portrays the function calls and arguments to provide.
     **  For a more specific and realistic approach, see the provided demonstration code.
     **  Note that these calls do not do any drawing. Only chart structures (pseudo objects).
+    **  Drawing only occurs once the main loop has started.
     */
 
     /* Create pie chart - see function code for argument details */
@@ -239,6 +240,8 @@ void main_ui(Ui *ui)
 
 void get_pie_data(double **pie_data, int *arr_sz)
 {  
+    /* User code */
+
     //*pie_data = malloc(entries * sizeof(double));
 
     return;

@@ -52,7 +52,8 @@
 
 /* Prototypes */
 
-PieChart * pie_chart_create(char *, double, int, const GdkRGBA *, int, int);
+PieChart * pie_chart_setup(char *, const GdkRGBA *, int, int, int, double **, int, Ui *);
+PieChart * pie_chart_create(char *, const GdkRGBA *, int, double, int, int);
 int pie_slice_create(PieChart *, char *, double, const GdkRGBA *, const GdkRGBA *, int);
 void free_pie_chart(PieChart *);
 void free_slices(gpointer);
@@ -134,18 +135,31 @@ PieChart * pie_chart_setup(char *title,
 			   double **pie_data_arr, int pie_arr_sz,
 			   Ui *ui)
 {
-    PieChart *pc;
+    int i;
     double total_val;
+    PieChart *pc;
 
     /* Application dependent - if the chart is being refreshed, need to free it first */
     if (ui->pie_chart != NULL)
     	free_pie_chart(ui->pie_chart);
 
     /* Determine the total value */
+    total_val = 0;
+
+    for(i = 0; i < pie_arr_sz; i++)
+    {
+    	total_val += *(pie_data_arr + i);
+    }
 
     /* Create chart */
     pc = pie_chart_create(title, &DARK_BLUE, txt_sz, total_val, legend, lbl_opt);
 
+    /* Create pie chart slices */
+    for(i = 0; i < pie_arr_sz; i++)
+    {
+	//pie_slice_create(pc, label, slice_val, &LIGHT_BLUE, &DARK_MAROON, 10);
+	pie_slice_create(pc, *(pie_data_arr.text)[i], slice_val, &LIGHT_BLUE, &DARK_MAROON, 10);
+    }
 
     return pc;
 }
