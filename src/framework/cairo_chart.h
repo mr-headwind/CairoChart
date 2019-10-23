@@ -43,6 +43,22 @@
 #endif
 
 
+#ifndef CFW_OPTS
+#define CFW_OPTS
+
+#define CFW_CLR_LIGHT 1
+#define CFW_CLR_MID 2
+#define CFW_CLR_FULL 3
+
+#define CFW_TXT_DEF 12
+
+#define CFW_DARK_BLUE 1
+#define CFW_DARK_RED 20
+#define CFW_BLACK 30
+#define CFW_WHITE 40
+#endif
+
+
 /* Chart Text */
 
 typedef struct _chart_text
@@ -70,6 +86,25 @@ typedef struct _axis
 } Axis;
 
 
+/* Pie List */
+
+typedef struct _pie_list
+{
+    GList *pie_data_list;
+    int pie_list_sz;
+    double pie_total_value;
+} PieDataList;
+
+
+/* Pie chart data */
+
+typedef struct _pie_list_ent
+{
+    char * ent_txt;
+    double ent_value;
+} PieListEntry;
+
+
 /* Pie Chart control details */
 
 typedef struct _pie_chart
@@ -77,7 +112,8 @@ typedef struct _pie_chart
     CText *title;
     double total_value;
     int legend;
-    int lbl_opt;
+    int show_label;
+    int slice_colour_tone;
     GList *pie_slices;
 } PieChart;
 

@@ -52,7 +52,7 @@
 
 /* Prototypes */
 
-PieChart * pie_chart_setup(char *, const GdkRGBA *, int, int, int, double **, int, Ui *);
+PieChart * pie_chart_setup(char *, int, int, int, int, int, PieDataList *, Ui *);
 PieChart * pie_chart_create(char *, const GdkRGBA *, int, double, int, int);
 int pie_slice_create(PieChart *, char *, double, const GdkRGBA *, const GdkRGBA *, int);
 void free_pie_chart(PieChart *);
@@ -127,16 +127,29 @@ static const double axis_buf = 5.0;
 
 
 
-/* Set up pie chart structures */
+/* Set up pie chart structures
+**
+** Arguments:-
+** . Title - optional (NULL).
+** . Text colour - optional (NULL), defaults to Black.
+** . Text size - optional (NULL), defaults to 12.
+** . Legend - print a legend or not (TRUE or FALSE).
+** . Show Labels - print labels on slices or not (TRUE or FALSE).
+** . Slice Colour Tone - use light, mid range or full colours.
+** . PieDataList - List of values to build the pie chart.
+** . Ui - The user interface widgets, if needed.
+*/
 
 PieChart * pie_chart_setup(char *title, 
-			   const GdkRGBA *txt_colour, int txt_sz, 
-			   int legend, int lbl_opt,
-			   double **pie_data_arr, int pie_arr_sz,
+			   int colour_idx,
+			   int txt_sz, 
+			   int legend,
+			   int show_label,
+			   int slice_colour_tone,
+			   PieDataList *cfw_pie_list,
 			   Ui *ui)
 {
     int i;
-    double total_val;
     PieChart *pc;
 
     /* Application dependent - if the chart is being refreshed, need to free it first */
@@ -144,15 +157,24 @@ PieChart * pie_chart_setup(char *title,
     	free_pie_chart(ui->pie_chart);
 
     /* Determine the total value */
-    total_val = 0;
-
-    for(i = 0; i < pie_arr_sz; i++)
+    if (cfw_pie_list->pie_total_value != 0)
     {
-    	total_val += *(pie_data_arr + i);
+    	cfw_pie_list->pie_total_value = 0;
+
+	for(i = 0; i < pie_arr_sz; i++)
+	{
+	    total_val += *(pie_data_arr + i);
+	}
     }
 
     /* Create chart */
-    pc = pie_chart_create(title, &DARK_BLUE, txt_sz, total_val, legend, lbl_opt);
+    pc = pie_chart_create(title, 
+    			  colour_idx, 
+    			  txt_sz, 
+    			  legend, 
+    			  show_label, 
+    			  slice_colour_tone, 
+    			  cfw_pie_list->pie_total_value);
 
     /* Create pie chart slices */
     for(i = 0; i < pie_arr_sz; i++)
@@ -175,25 +197,33 @@ PieChart * pie_chart_setup(char *title,
 // . Text size is optional (0) and will default to 12.
 
 PieChart * pie_chart_create(char *title, 
-			    const GdkRGBA *txt_colour, int txt_sz, 
-			    double total_val, int legend, int lbl_opt)
+			    int colour_idx, 
+			    int txt_sz, 
+			    int legend, 
+			    int show_label,
+			    int slice_colour_tone,
+			    double total_val)
 {
     PieChart *pc;
 
+    /* Error checking */
     if (legend < 0 || legend > 1)
     	return NULL;
 
-    if (lbl_opt < LBL || lbl_opt > BOTH)
+    if (show_label < LBL || show_label > BOTH)
     	return NULL;
 
+    /* Create chart */
     pc = (PieChart *) malloc(sizeof(PieChart));
     memset(pc, 0, sizeof(PieChart));
 
-    pc->title = new_chart_text(title, txt_colour, txt_sz);
+    /* Create new title text */
+    pc->title = new_chart_text(title, colour_idx, txt_sz);
 
-    pc->lbl_opt = lbl_opt;
-    pc->total_value = total_val;
+    /* Chart information */
+    pc->show_label = show_label;
     pc->legend = legend;
+    pc->total_value = total_val;
 
     return pc;
 }

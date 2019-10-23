@@ -26,9 +26,10 @@
 **
 ** Description:
 **  	Main application template for using the framework. This is a guide only to highlight the
-**      structure of calls and layout required to create charts. The demo application provides executable
-**      functionality to better demonstrate possibilities. Both are provided as a guide only, the overall 
-**	Application structure and layout will vary by application and is at the discretion of developers.
+**      structure of calls and layout required to create charts. It is not compilable.
+**	The demo application provides executable functionality to better demonstrate 
+**	possibilities. Both are provided as a guide only, the overall application structure 
+**	and layout will vary by application and is at the discretion of developers.
 **
 ** History
 **	12-Oct-2019	Initial code
@@ -42,6 +43,7 @@
 #include <string.h>  
 #include <gtk/gtk.h>  
 #include <demo.h>
+#include <cairo_chart.h>
 
 
 /* Defines */
@@ -64,7 +66,7 @@ typedef struct _ui
     */
 
     /*
-    ** Include chart widgets as required 
+    ** Include following chart widgets as required 
     */
 
     /* Widgets - pie chart */
@@ -87,22 +89,20 @@ void initialise(Ui *);
 void final(Ui *);
 void main_ui(Ui *);
 
-
 /*
 ** Application dependent
 */
 
-void get_pie_data(&pie_data, &pie_arr_sz);
-
+void get_pie_data(PieDataList *);
 
 extern PieChart * pie_chart_setup(char *, const GdkRGBA *, int, int, int, double **, int, Ui *);
+extern void free_pie_chart(PieChart *);
+extern void free_bar_chart(BarChart *);
+extern void free_line_graph(LineGraph *);
 
 /*
-** User code to free charts as required 
+** End application dependent
 */
-void free_pie_chart(PieChart *);
-void free_bar_chart(BarChart *);
-void free_line_graph(LineGraph *);
 
 
 /* Globals */
@@ -113,8 +113,7 @@ void free_line_graph(LineGraph *);
 int main(int argc, char *argv[])
 {  
     Ui ui;
-    double *pie_data_arr;
-    int pie_arr_sz.
+    PieDataList cfw_pie_list;
 
     /* Initial work */
     initialise(&ui);
@@ -126,27 +125,42 @@ int main(int argc, char *argv[])
     main_ui(&ui);
 
 
+    /*
+    ** Application dependent
+    */
 
     /* User code - Assemble pie chart data */
-    get_pie_data(&pie_data_arr, &pie_arr_sz);
-
+    get_pie_data(&cfw_pie_list);
 
     /*
     **  The location of chart creation (object) function calls will be very much application dependent.
     **  The code shown below only portrays the function calls and arguments to provide.
     **  For a more specific and realistic approach, see the provided demonstration code.
-    **  Note that these calls do not do any drawing. Only chart structures (pseudo objects).
-    **  Drawing only occurs once the main loop has started.
+    **  Note that these calls do not do any drawing. Only chart structures (pseudo objects)
+    **  are created here.
+    **  Drawing only occurs after the main loop has started.
     */
 
     /* Create pie chart - see function code for argument details */
-    ui->pie_chart = pie_chart_setup("Title", 
-    				    &DARK_BLUE, text_sz, 
-    				    legend_opt, label_opt, 
-    				    &pie_data_arr, pie_arr_sz,
+    char title[20];
+    int legend_opt, label_opt;
+
+    strcpy(chart_title, "My Pie Chart");
+    legend_opt = FALSE;
+    label_opt = TRUE;
+
+    ui->pie_chart = pie_chart_setup(chart_title, 
+    				    CFW_DARK_BLUE, 
+    				    CFW_TXT_DEF, 
+    				    legend_opt, 
+    				    label_opt, 
+    				    CFW_CLR_LIGHT,
+    				    &cfw_pie_list,
     				    &ui);
 
-
+    /*
+    ** End application dependent
+    */
 
 
     /* Start main loop */
@@ -238,11 +252,15 @@ void main_ui(Ui *ui)
 ** array of doubles and the number of entries.
 */
 
-void get_pie_data(double **pie_data, int *arr_sz)
+void get_pie_data(PieDataList *cfw_pie_list)
 {  
     /* User code */
 
-    //*pie_data = malloc(entries * sizeof(double));
+    /* Add entries for the pie chart to the list, deriving a total is optional */
+    cfw_pie_list->pie_total_value = 0;
+
+    /* Get total number of entries */
+    cfw_pie_list->pie_list_sz = g_list_length(cfw_pie_list->pie_data_list);
 
     return;
 }
