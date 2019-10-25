@@ -111,6 +111,7 @@ typedef struct _pie_chart
 {
     CText *title;
     double total_value;
+    int oth_txt_sz;
     int legend;
     int show_label;
     int slice_colour_tone;

@@ -132,7 +132,8 @@ static const double axis_buf = 5.0;
 ** Arguments:-
 ** . Title - optional (NULL).
 ** . Text colour - optional (NULL), defaults to Black.
-** . Text size - optional (NULL), defaults to 12.
+** . Heading Text size - the title in this case, optional (NULL), defaults to 12.
+** . Other Text size - slice descriptions, optional (NULL), defaults to 12.
 ** . Legend - print a legend or not (TRUE or FALSE).
 ** . Show Labels - print labels on slices or not (TRUE or FALSE).
 ** . Slice Colour Tone - use light, mid range or full colours.
@@ -142,45 +143,58 @@ static const double axis_buf = 5.0;
 
 PieChart * pie_chart_setup(char *title, 
 			   int colour_idx,
-			   int txt_sz, 
+			   int hdg_txt_sz, 
+			   int oth_txt_sz, 
 			   int legend,
 			   int show_label,
 			   int slice_colour_tone,
-			   PieDataList *cfw_pie_list,
+			   PieDataList *cfw_pie_data,
 			   Ui *ui)
 {
     int i;
     PieChart *pc;
+    GList *l;
+    PieListEntry *pie_item;
 
     /* Application dependent - if the chart is being refreshed, need to free it first */
     if (ui->pie_chart != NULL)
     	free_pie_chart(ui->pie_chart);
 
     /* Determine the total value */
-    if (cfw_pie_list->pie_total_value != 0)
+    if (cfw_pie_data->pie_total_value == 0)
     {
-    	cfw_pie_list->pie_total_value = 0;
-
-	for(i = 0; i < pie_arr_sz; i++)
+	for(l = cfw_pie_data; l != NULL; l = l->next)
 	{
-	    total_val += *(pie_data_arr + i);
+	    pie_item = (PieListEntry *) l->data;
+	    total_val += pie_item->ent_value;
 	}
+
+	cfw_pie_data->pie_total_value = total_value;
     }
 
     /* Create chart */
     pc = pie_chart_create(title, 
     			  colour_idx, 
-    			  txt_sz, 
+    			  hdh_txt_sz, 
+    			  oth_txt_sz, 
     			  legend, 
     			  show_label, 
     			  slice_colour_tone, 
-    			  cfw_pie_list->pie_total_value);
+    			  cfw_pie_data->pie_total_value);
 
     /* Create pie chart slices */
+    for(l = cfw_pie_data; l != NULL; l = l->next)
+    {
+	pie_item = (PieListEntry *) l->data;
+
+	pie_slice_create(pc, 
+			 pie_item->ent_txt, 
+			 pie_item->ent_value, 
+			 &LIGHT_BLUE, &DARK_MAROON, 10);
+    }
     for(i = 0; i < pie_arr_sz; i++)
     {
 	//pie_slice_create(pc, label, slice_val, &LIGHT_BLUE, &DARK_MAROON, 10);
-	pie_slice_create(pc, *(pie_data_arr.text)[i], slice_val, &LIGHT_BLUE, &DARK_MAROON, 10);
     }
 
     return pc;
@@ -191,14 +205,16 @@ PieChart * pie_chart_setup(char *title,
 
 // Rules for creation:-
 // . Title is optional (NULL).
-// . Text colour is optional (NULL).
-// . Total value is optional (0) as the code will work it out anyway (may be a useful error check).
-// . Legend is either TRUE or FALSE.
+// . Heading Text colour is optional (NULL).
+// . Other Text colour is optional (NULL).
 // . Text size is optional (0) and will default to 12.
+// . Legend is either TRUE or FALSE.
+// . Total value - either supplied or derived.
 
 PieChart * pie_chart_create(char *title, 
 			    int colour_idx, 
-			    int txt_sz, 
+			    int hdg_txt_sz, 
+			    int oth_txt_sz, 
 			    int legend, 
 			    int show_label,
 			    int slice_colour_tone,

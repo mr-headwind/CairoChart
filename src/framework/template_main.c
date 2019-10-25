@@ -113,7 +113,7 @@ extern void free_line_graph(LineGraph *);
 int main(int argc, char *argv[])
 {  
     Ui ui;
-    PieDataList cfw_pie_list;
+    PieDataList cfw_pie_data;
 
     /* Initial work */
     initialise(&ui);
@@ -130,7 +130,7 @@ int main(int argc, char *argv[])
     */
 
     /* User code - Assemble pie chart data */
-    get_pie_data(&cfw_pie_list);
+    get_pie_data(&cfw_pie_data);
 
     /*
     **  The location of chart creation (object) function calls will be very much application dependent.
@@ -155,7 +155,7 @@ int main(int argc, char *argv[])
     				    legend_opt, 
     				    label_opt, 
     				    CFW_CLR_LIGHT,
-    				    &cfw_pie_list,
+    				    &cfw_pie_data,
     				    &ui);
 
     /*
