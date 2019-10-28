@@ -88,12 +88,12 @@ typedef struct _axis
 
 /* Pie List */
 
-typedef struct _pie_list
+typedef struct _pie_data
 {
     GList *pie_data_list;
     int pie_list_sz;
     double pie_total_value;
-} PieDataList;
+} PieData;
 
 
 /* Pie chart data */
@@ -111,10 +111,11 @@ typedef struct _pie_chart
 {
     CText *title;
     double total_value;
-    int oth_txt_sz;
+    int oth_txt_sz;	// ????
+    const GdkRGBA *oth_txt_colour;  //???
     int legend;
     int show_label;
-    int slice_colour_tone;
+    int slice_colour_tone;  // ???
     GList *pie_slices;
 } PieChart;
 

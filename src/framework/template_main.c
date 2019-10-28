@@ -113,7 +113,7 @@ extern void free_line_graph(LineGraph *);
 int main(int argc, char *argv[])
 {  
     Ui ui;
-    PieDataList cfw_pie_data;
+    PieData cfw_pie_data;
 
     /* Initial work */
     initialise(&ui);
@@ -248,19 +248,37 @@ void main_ui(Ui *ui)
 
 
 /* 
-** Collect data for the pie chart. Application dependent, but ultimatelly must end up with a pointer to an 
-** array of doubles and the number of entries.
+** Collect data for the pie chart. Application dependent, but ultimately must end up with a "PieData" struct.
+** Build a GList of data item entries. Dont forget to free it when completed !
 */
 
-void get_pie_data(PieDataList *cfw_pie_list)
+void get_pie_data(PieData *cfw_pie_data)
 {  
-    /* User code */
+    /* User code - sample */
+    PieListEntry *pie_data_item;
+    int i;
+    double total_val;
+
+    cfw_pie_data->pie_data_list = NULL;
+    total_val = 0;
+
+    for(i = 0; i < max_items; i++)
+    {
+    	pie_data_item = (PieListEntry *) malloc(sizeof(PieListEntry)):
+    	pie_data_item->ent_txt = &some_desc_txt;
+    	pie_data_item->ent_value = some_data_val;
+    	total_val += some_data_val;
+
+    	cfw_pie_data->pie_data_list = g_list_prepend (cfw_pie_data->pie_data_list, (gpointer) pie_data_item);
+    }
+
+    cfw_pie_data->pie_data_list = g_list_reverse (cfw_pie_data->pie_data_list);
 
     /* Add entries for the pie chart to the list, deriving a total is optional */
-    cfw_pie_list->pie_total_value = 0;
+    cfw_pie_list->pie_total_value = total_val;
 
     /* Get total number of entries */
-    cfw_pie_list->pie_list_sz = g_list_length(cfw_pie_list->pie_data_list);
+    cfw_pie_data->pie_list_sz = g_list_length(cfw_pie_data->pie_data_list);
 
     return;
 }

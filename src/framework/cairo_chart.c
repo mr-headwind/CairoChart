@@ -145,10 +145,11 @@ PieChart * pie_chart_setup(char *title,
 			   int colour_idx,
 			   int hdg_txt_sz, 
 			   int oth_txt_sz, 
+			   int oth_txt_colour_idx, 
 			   int legend,
 			   int show_label,
 			   int slice_colour_tone,
-			   PieDataList *cfw_pie_data,
+			   PieData *cfw_pie_data,
 			   Ui *ui)
 {
     int i;
@@ -163,7 +164,7 @@ PieChart * pie_chart_setup(char *title,
     /* Determine the total value */
     if (cfw_pie_data->pie_total_value == 0)
     {
-	for(l = cfw_pie_data; l != NULL; l = l->next)
+	for(l = cfw_pie_data->pie_data_list; l != NULL; l = l->next)
 	{
 	    pie_item = (PieListEntry *) l->data;
 	    total_val += pie_item->ent_value;
@@ -175,11 +176,11 @@ PieChart * pie_chart_setup(char *title,
     /* Create chart */
     pc = pie_chart_create(title, 
     			  colour_idx, 
-    			  hdh_txt_sz, 
-    			  oth_txt_sz, 
+    			  hdg_txt_sz, 
+    			  oth_txt_sz, // ?
     			  legend, 
     			  show_label, 
-    			  slice_colour_tone, 
+    			  slice_colour_tone,   // ??
     			  cfw_pie_data->pie_total_value);
 
     /* Create pie chart slices */
@@ -215,6 +216,7 @@ PieChart * pie_chart_create(char *title,
 			    int colour_idx, 
 			    int hdg_txt_sz, 
 			    int oth_txt_sz, 
+			    int oth_txt_colour_idx, 
 			    int legend, 
 			    int show_label,
 			    int slice_colour_tone,
