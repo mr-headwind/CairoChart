@@ -61,7 +61,7 @@ typedef struct _ui
 
     /*
     **
-    **	Add widgets here
+    **	Add application widgets here
     **
     */
 
@@ -95,7 +95,7 @@ void main_ui(Ui *);
 
 void get_pie_data(PieDataList *);
 
-extern PieChart * pie_chart_setup(char *, const GdkRGBA *, int, int, int, double **, int, Ui *);
+extern PieChart * pie_chart_setup(char *, int, int, int, int, int, int, int, PieDataList *, Ui *);
 extern void free_pie_chart(PieChart *);
 extern void free_bar_chart(BarChart *);
 extern void free_line_graph(LineGraph *);
@@ -150,8 +150,10 @@ int main(int argc, char *argv[])
     label_opt = TRUE;
 
     ui->pie_chart = pie_chart_setup(chart_title, 
-    				    CFW_DARK_BLUE, 
     				    CFW_TXT_DEF, 
+    				    CFW_DARK_BLUE, 
+    				    CFW_TXT_10, 
+    				    NULL, 
     				    legend_opt, 
     				    label_opt, 
     				    CFW_CLR_LIGHT,
@@ -248,7 +250,8 @@ void main_ui(Ui *ui)
 
 
 /* 
-** Collect data for the pie chart. Application dependent, but ultimately must end up with a "PieData" struct.
+** Collect data for the pie chart. Application dependent, 
+** but ultimately must end up with a "PieData" struct.
 ** Build a GList of data item entries. Dont forget to free it when completed !
 */
 
@@ -269,7 +272,8 @@ void get_pie_data(PieData *cfw_pie_data)
     	pie_data_item->ent_value = some_data_val;
     	total_val += some_data_val;
 
-    	cfw_pie_data->pie_data_list = g_list_prepend (cfw_pie_data->pie_data_list, (gpointer) pie_data_item);
+    	cfw_pie_data->pie_data_list = g_list_prepend (cfw_pie_data->pie_data_list, 
+						      (gpointer) pie_data_item);
     }
 
     cfw_pie_data->pie_data_list = g_list_reverse (cfw_pie_data->pie_data_list);

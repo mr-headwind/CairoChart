@@ -52,8 +52,9 @@
 
 /* Prototypes */
 
-PieChart * pie_chart_setup(char *, int, int, int, int, int, PieDataList *, Ui *);
-PieChart * pie_chart_create(char *, const GdkRGBA *, int, double, int, int);
+PieChart * pie_chart_setup(char *, int, int, int, int, int, int, int, PieDataList *, Ui *);
+PieChart * pie_chart_create(char *, int, int, int, int, int, int, int, double);
+//PieChart * pie_chart_create(char *, const GdkRGBA *, int, double, int, int);
 int pie_slice_create(PieChart *, char *, double, const GdkRGBA *, const GdkRGBA *, int);
 void free_pie_chart(PieChart *);
 void free_slices(gpointer);
@@ -131,9 +132,10 @@ static const double axis_buf = 5.0;
 **
 ** Arguments:-
 ** . Title - optional (NULL).
-** . Text colour - optional (NULL), defaults to Black.
-** . Heading Text size - the title in this case, optional (NULL), defaults to 12.
-** . Other Text size - slice descriptions, optional (NULL), defaults to 12.
+** . Heading Text Size - the title in this case, optional (NULL), defaults to 12.
+** . Heading Text Colour - optional (NULL), defaults to Black.
+** . Other Text Size - slice descriptions, optional (NULL), defaults to 12.
+** . Other Text Colour - optional (NULL), defaults to Black.
 ** . Legend - print a legend or not (TRUE or FALSE).
 ** . Show Labels - print labels on slices or not (TRUE or FALSE).
 ** . Slice Colour Tone - use light, mid range or full colours.
@@ -142,8 +144,8 @@ static const double axis_buf = 5.0;
 */
 
 PieChart * pie_chart_setup(char *title, 
-			   int colour_idx,
 			   int hdg_txt_sz, 
+			   int colour_idx,
 			   int oth_txt_sz, 
 			   int oth_txt_colour_idx, 
 			   int legend,
@@ -175,12 +177,13 @@ PieChart * pie_chart_setup(char *title,
 
     /* Create chart */
     pc = pie_chart_create(title, 
-    			  colour_idx, 
     			  hdg_txt_sz, 
-    			  oth_txt_sz, // ?
+    			  colour_idx, 
+    			  oth_txt_sz,
+    			  oth_txt_colour_idx,
     			  legend, 
     			  show_label, 
-    			  slice_colour_tone,   // ??
+    			  slice_colour_tone, 
     			  cfw_pie_data->pie_total_value);
 
     /* Create pie chart slices */
@@ -202,19 +205,23 @@ PieChart * pie_chart_setup(char *title,
 }
 
 
-/* Create and initialise a new pie chart */
-
-// Rules for creation:-
-// . Title is optional (NULL).
-// . Heading Text colour is optional (NULL).
-// . Other Text colour is optional (NULL).
-// . Text size is optional (0) and will default to 12.
-// . Legend is either TRUE or FALSE.
-// . Total value - either supplied or derived.
+/* Create and initialise a new pie chart
+**
+** Arguments:-
+** . Title is optional (NULL).
+** . Title Text Size is optional (NULL).
+** . Title Text colour is optional (NULL).
+** . Other Text Size is optional (NULL).
+** . Other Text Colour is optional (NULL).
+** . Legend is either TRUE or FALSE.
+** . Show Labels is either TRUE or FALSE.
+** . Slice colour tone.
+** . Total value.
+*/
 
 PieChart * pie_chart_create(char *title, 
-			    int colour_idx, 
 			    int hdg_txt_sz, 
+			    int colour_idx, 
 			    int oth_txt_sz, 
 			    int oth_txt_colour_idx, 
 			    int legend, 
@@ -235,12 +242,14 @@ PieChart * pie_chart_create(char *title,
     pc = (PieChart *) malloc(sizeof(PieChart));
     memset(pc, 0, sizeof(PieChart));
 
-    /* Create new title text */
+    /* Create text entries */
     pc->title = new_chart_text(title, colour_idx, txt_sz);
+    pc->oth_txt = new_chart_text(NULL, oth_txt_colour_idx, oth_txt_sz);
 
     /* Chart information */
     pc->show_label = show_label;
     pc->legend = legend;
+    pc->slice_colour_tone = slice_colour_tone;
     pc->total_value = total_val;
 
     return pc;

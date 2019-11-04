@@ -51,6 +51,7 @@
 #define CFW_CLR_FULL 3
 
 #define CFW_TXT_DEF 12
+#define CFW_TXT_10 10
 
 #define CFW_DARK_BLUE 1
 #define CFW_DARK_RED 20
@@ -110,12 +111,11 @@ typedef struct _pie_list_ent
 typedef struct _pie_chart
 {
     CText *title;
-    double total_value;
-    int oth_txt_sz;	// ????
-    const GdkRGBA *oth_txt_colour;  //???
+    CText *oth_txt;
     int legend;
     int show_label;
-    int slice_colour_tone;  // ???
+    int slice_colour_tone;
+    double total_value;
     GList *pie_slices;
 } PieChart;
 
